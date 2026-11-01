@@ -4,9 +4,13 @@
 (function () {
   'use strict';
 
-  var VERSION = '2.7';
+  var VERSION = '2.8';
 
   var HISTORY = [
+    { v: '2.8', date: '2026-11-01', changes: [
+      'Le site s\u2019appelle désormais « Minijeux » (nouvelle adresse : florito32.github.io/minijeux).',
+      'QR code mis à jour vers la nouvelle adresse.'
+    ] },
     { v: '2.7', date: '2026-11-01', changes: [
       'Correction : toucher un chiffre choisit bien cette table (avant, toutes étaient cochées et un clic sur 3 retirait la table de 3).',
       'Au départ aucune table n\u2019est cochée ; « Toutes » coche tout, puis un clic sur un chiffre ne garde que celui-là.'

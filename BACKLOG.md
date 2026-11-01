@@ -1,6 +1,6 @@
-# BACKLOG — ludoaventura
+# BACKLOG — minijeux (ex-ludoaventura)
 
-> Depuis v2.0 (1er novembre 2026), Ludoaventura est un site de **petits jeux** avec une barre d'onglets. Les lignes 1–18 concernent l'ancienne version (éléphants, retirée).
+> Depuis v2.0 (1er novembre 2026), le site (renommé « Minijeux » en v2.8) est un site de **petits jeux** avec une barre d'onglets. Les lignes 1–18 concernent l'ancienne version (éléphants, retirée).
 
 Statuts : à faire / en cours / fait à valider / terminé / question en attente
 
@@ -53,3 +53,4 @@ Statuts : à faire / en cours / fait à valider / terminé / question en attente
 | 45 | Puissance 4 : remettre aussi les scores à zéro | fait à valider (v2.6, choix de l'utilisateur ; l'ancienne sauvegarde est effacée) | ✅ |
 | 46 | Puissance 4 : « je me connecte avec un autre appareil et le jeu n'est pas remis au début » | fait à valider — la partie n'était gardée que sur l'appareil où on jouait ; depuis v2.6 rien n'est gardé, chaque appareil démarre au menu | ✅ |
 | 47 | Bug : en choisissant la table de 3 avant la partie, le nombre à trouver venait d'une autre table — corriger | fait à valider (v2.7) — cause : toutes les tables étaient cochées par défaut, cliquer sur 3 la décochait. Correction : rien n'est coché au départ, « Toutes » coche tout puis un clic sur un chiffre ne garde que lui ; anciens choix mémorisés effacés | ✅ 128/128 en local (test de non-régression ajouté) |
+| 48 | Renommer le site « minijeux » au lieu de « ludoaventura » (nom + adresse, choix validé) | en cours (v2.8) — nom affiché, titres, appli installable, QR code, liens ; dépôt GitHub à renommer `minijeux` → https://florito32.github.io/minijeux/ ; clés de stockage internes gardées pour ne pas perdre les choix mémorisés | |

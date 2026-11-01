@@ -1,5 +1,5 @@
 /*
- * Moteur du Puissance 4 (Ludoaventura) : règles du jeu et intelligence artificielle.
+ * Moteur du Puissance 4 (Minijeux) : règles du jeu et intelligence artificielle.
  * Aucune dépendance à l'affichage, pour pouvoir être testé seul.
  *
  * Plateau : tableau de 6 lignes × 7 colonnes. board[ligne][colonne],
