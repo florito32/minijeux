@@ -4,7 +4,7 @@ const { test, expect } = require('@playwright/test');
 const AxeBuilder = require('@axe-core/playwright').default;
 
 for (const scheme of ['light', 'dark']) {
-  for (const path of ['multiplication/', 'puissance-4/']) {
+  for (const path of ['multiplication/', 'multiplication/aventure/', 'puissance-4/']) {
     test(`aucune violation WCAG A/AA (${scheme}) : ${path}`, async ({ page }) => {
       await page.emulateMedia({ colorScheme: scheme });
       await page.goto(path);

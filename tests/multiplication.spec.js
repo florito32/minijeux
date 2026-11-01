@@ -6,7 +6,7 @@ const etat = (page) => page.evaluate(() => window.__jeu.etat());
 
 // Ouvre le jeu et clique sur « Jouer ».
 async function demarrer(page) {
-  await page.goto('multiplication/');
+  await page.goto('multiplication/aventure/');
   await page.getByRole('button', { name: 'Jouer' }).click();
   await expect.poll(async () => (await etat(page)).status).toBe('playing');
 }
@@ -20,22 +20,45 @@ async function casser(page, i) {
   await page.keyboard.up('Space');
 }
 
-test('l\'accueil ouvre directement l\'onglet Multiplication @smoke', async ({ page }) => {
+test('l\'accueil ouvre l\'onglet Multiplication : page des jeux en vignettes @smoke', async ({ page }) => {
   await page.goto('./');
   await expect(page).toHaveURL(/\/multiplication\/$/);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Aventure des multiplications');
-});
-
-test('barre d\'onglets : l\'onglet Multiplication est actif @smoke', async ({ page }) => {
-  await page.goto('multiplication/');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Jeux de multiplication');
   const nav = page.getByRole('navigation', { name: 'Jeux' });
   await expect(nav.getByRole('link', { name: /Multiplication/ })).toHaveAttribute('aria-current', 'page');
+});
+
+test('la vignette « Aventure des multiplications » ouvre le jeu, retour possible @smoke', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('multiplication/');
+  const vignette = page.getByRole('link', { name: /Aventure des multiplications/ });
+  await expect(vignette.locator('img')).toBeVisible();
+  expect(await vignette.locator('img').evaluate((el) => el.naturalWidth)).toBeGreaterThan(0);
+  await vignette.click();
+  await expect(page).toHaveURL(/\/multiplication\/aventure\/$/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Aventure des multiplications');
+  // L'onglet Multiplication reste en surbrillance dans le jeu
+  const nav = page.getByRole('navigation', { name: 'Jeux' });
+  await expect(nav.getByRole('link', { name: /Multiplication/ })).toHaveAttribute('aria-current', 'true');
+  await page.getByRole('link', { name: '← Jeux de multiplication' }).click();
+  await expect(page).toHaveURL(/\/multiplication\/$/);
+  expect(errors).toEqual([]);
+});
+
+test('page des vignettes : pas de défilement horizontal @smoke', async ({ page }) => {
+  await page.goto('multiplication/');
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+  );
+  expect(overflow).toBeLessThanOrEqual(0);
+  await expect(page.getByRole('link', { name: /Aventure des multiplications/ })).toBeInViewport();
 });
 
 test('le nombre à trouver est affiché sous le jeu et 1 caisse sur 3 lui correspond @smoke', async ({ page }) => {
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  await page.goto('multiplication/');
+  await page.goto('multiplication/aventure/');
   await expect(page.locator('[data-target]')).toHaveText('?');   // révélé au lancement
   await page.getByRole('button', { name: 'Jouer' }).click();
   const s = await etat(page);
@@ -55,7 +78,7 @@ test('le nombre à trouver est affiché sous le jeu et 1 caisse sur 3 lui corres
 });
 
 test('choix des tables : seules les tables choisies apparaissent, choix mémorisé', async ({ page }) => {
-  await page.goto('multiplication/');
+  await page.goto('multiplication/aventure/');
   const groupe = page.getByRole('group', { name: /Tes tables/ });
   await groupe.getByRole('button', { name: 'Aucune' }).click();
   await expect(page.getByRole('button', { name: 'Jouer' })).toBeDisabled();
@@ -91,7 +114,7 @@ test('chaque partie lancée change le nombre à trouver', async ({ page }) => {
   }
 });
 
-for (const chemin of ['multiplication/', 'puissance-4/']) test(`QR code « Sur téléphone » sur ordinateur : ${chemin} @smoke`, async ({ page }) => {
+for (const chemin of ['multiplication/', 'multiplication/aventure/', 'puissance-4/']) test(`QR code « Sur téléphone » sur ordinateur : ${chemin} @smoke`, async ({ page }) => {
   test.skip(test.info().project.name !== 'ordinateur', 'bouton affiché seulement sur ordinateur');
   await page.goto(chemin);
   await page.getByRole('button', { name: /Sur téléphone/ }).click();
@@ -168,7 +191,7 @@ test('commandes tactiles visibles et utilisables sur téléphone et tablette', a
 });
 
 test('écran de jeu, nombre et commandes tiennent dans l\'écran, sans défilement horizontal @smoke', async ({ page }) => {
-  await page.goto('multiplication/');
+  await page.goto('multiplication/aventure/');
   // Écran de début : le choix des tables et le bouton Jouer sont visibles sans défiler.
   await expect(page.getByRole('button', { name: 'Jouer' })).toBeInViewport({ ratio: 1 });
   await expect(page.getByRole('button', { name: '10', exact: true })).toBeInViewport({ ratio: 1 });
