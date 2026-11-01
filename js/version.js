@@ -4,9 +4,14 @@
 (function () {
   'use strict';
 
-  var VERSION = '2.1';
+  var VERSION = '2.2';
 
   var HISTORY = [
+    { v: '2.2', date: '2026-11-01', changes: [
+      'Nouveau jeu : Puissance 4, dans un nouvel onglet.',
+      'Contre l\u2019ordinateur avec 3 niveaux (Facile, Moyen, Difficile) ou à deux sur le même téléphone.',
+      'Jetons rouges et jaunes, scores, partie en cours sauvegardée, jouable au clavier.'
+    ] },
     { v: '2.1', date: '2026-11-01', changes: [
       'Le jeu de multiplication devient une aventure 2D : un personnage court et saute.',
       'On casse par en dessous les caisses dont la multiplication donne le nombre affiché en bas (1 caisse sur 3).',

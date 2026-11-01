@@ -1,7 +1,7 @@
 {
   "name": "Ludoaventura",
   "short_name": "Ludoaventura",
-  "description": "Petits jeux pour apprendre en s'amusant — 1er jeu : les tables de multiplication.",
+  "description": "Petits jeux pour apprendre en s'amusant — tables de multiplication et Puissance 4.",
   "lang": "fr",
   "start_url": "./multiplication/",
   "scope": "./",

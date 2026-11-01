@@ -1,0 +1,124 @@
+// Puissance 4 : parcours de jeu, ordinateur, sauvegarde, affichage sur chaque écran.
+// Les tests marqués @smoke sont aussi rejoués sur la page en ligne.
+const { test, expect } = require('@playwright/test');
+
+const col = (page, c) => page.locator(`.p4-col[data-col="${c}"]`);
+const tokens = (page) => page.locator('#p4-board .p4-token');
+
+// Clic ou toucher selon l'appareil simulé.
+async function press(page, c) {
+  if (test.info().project.use.hasTouch) await col(page, c).tap();
+  else await col(page, c).click();
+}
+
+test('onglet Puissance 4 présent et actif @smoke', async ({ page }) => {
+  await page.goto('multiplication/');
+  const nav = page.getByRole('navigation', { name: 'Jeux' });
+  await nav.getByRole('link', { name: /Puissance 4/ }).click();
+  await expect(page).toHaveURL(/\/puissance-4\/$/);
+  await expect(nav.getByRole('link', { name: /Puissance 4/ })).toHaveAttribute('aria-current', 'page');
+  await expect(page.getByRole('heading', { level: 1, name: 'Puissance 4' })).toBeVisible();
+});
+
+test('à deux : Rouge gagne en colonne, score, puis Jaune commence la suivante @smoke', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('puissance-4/');
+  await page.getByRole('button', { name: 'Jouer à deux sur ce téléphone' }).click();
+  await expect(page.locator('#p4-status')).toHaveText('Au tour de Rouge');
+  for (const c of [0, 1, 0, 1, 0, 1, 0]) await press(page, c);
+  await expect(page.locator('#p4-status')).toHaveText('Rouge gagne !');
+  await expect(page.locator('#p4-pts-1')).toHaveText('1');
+  await expect(page.locator('.p4-token.win')).toHaveCount(4);
+  await expect(col(page, 3)).toBeDisabled();
+  await page.getByRole('button', { name: 'Rejouer' }).click();
+  await expect(tokens(page)).toHaveCount(0);
+  await expect(page.locator('#p4-status')).toHaveText('Au tour de Jaune');
+  expect(errors).toEqual([]);
+});
+
+test("contre l'ordinateur (Difficile) : il répond à mon coup @smoke", async ({ page }) => {
+  await page.goto('puissance-4/');
+  await page.getByRole('radio', { name: 'Difficile' }).check();
+  await page.getByRole('button', { name: "Jouer contre l'ordinateur" }).click();
+  await expect(page.locator('#p4-mode-badge')).toHaveText('Difficile');
+  await expect(page.locator('#p4-status')).toHaveText('À toi de jouer');
+  await press(page, 3);
+  // Pendant que l'ordinateur réfléchit, on ne peut pas jouer.
+  await expect(col(page, 1)).toBeDisabled();
+  await expect(tokens(page)).toHaveCount(2, { timeout: 5000 });
+  await expect(page.locator('#p4-board .p4-token.p2')).toHaveCount(1);
+  await expect(page.locator('#p4-status')).toHaveText('À toi de jouer');
+  await expect(col(page, 1)).toBeEnabled();
+});
+
+test('une colonne pleine est désactivée', async ({ page }) => {
+  await page.goto('puissance-4/');
+  await page.getByRole('button', { name: 'Jouer à deux sur ce téléphone' }).click();
+  for (let i = 0; i < 6; i++) await press(page, 6);
+  await expect(col(page, 6)).toBeDisabled();
+  await expect(col(page, 6)).toHaveAttribute('aria-label', /pleine/);
+});
+
+test('la partie en cours est conservée après rechargement', async ({ page }) => {
+  await page.goto('puissance-4/');
+  await page.getByRole('button', { name: 'Jouer à deux sur ce téléphone' }).click();
+  await press(page, 2);
+  await press(page, 4);
+  await page.reload();
+  await expect(tokens(page)).toHaveCount(2);
+  await page.getByRole('button', { name: 'Retour au choix du mode' }).click();
+  await expect(page.getByRole('button', { name: 'Reprendre la partie en cours' })).toBeVisible();
+});
+
+test('clavier : flèches et Entrée pour jouer', async ({ page }) => {
+  test.skip(test.info().project.name !== 'ordinateur', 'navigation clavier testée sur ordinateur');
+  await page.goto('puissance-4/');
+  await page.getByRole('button', { name: 'Jouer à deux sur ce téléphone' }).click();
+  await col(page, 0).focus();
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('Enter');
+  await expect(page.locator('.p4-col[data-col="2"] .p4-token')).toHaveCount(1);
+});
+
+test('affichage : plateau et bouton entièrement visibles, sans défilement horizontal', async ({ page }) => {
+  await page.goto('puissance-4/');
+  const vp = page.viewportSize();
+  const solo = await page.getByRole('button', { name: "Jouer contre l'ordinateur" }).boundingBox();
+  expect(solo.y + solo.height).toBeLessThanOrEqual(vp.height);
+  await page.getByRole('button', { name: 'Jouer à deux sur ce téléphone' }).click();
+  const box = await page.locator('#p4-board').boundingBox();
+  expect(box.x).toBeGreaterThanOrEqual(0);
+  expect(box.x + box.width).toBeLessThanOrEqual(vp.width + 0.5);
+  const nav = await page.locator('nav.tabs').boundingBox();
+  expect(box.y).toBeGreaterThanOrEqual(nav.y + nav.height - 0.5);
+  expect(box.y + box.height).toBeLessThanOrEqual(vp.height + 0.5);
+  const replay = await page.locator('#p4-replay').boundingBox();
+  expect(replay.y + replay.height).toBeLessThanOrEqual(vp.height + 0.5);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+  // Colonnes assez larges pour le doigt
+  expect((await col(page, 0).boundingBox()).width).toBeGreaterThanOrEqual(36);
+  await press(page, 3);
+  await expect(tokens(page)).toHaveCount(1);
+  expect(await page.evaluate(() => scrollY)).toBe(0);
+});
+
+// Formats supplémentaires (petits téléphones, paysage) en plus des 4 projets de la configuration.
+for (const [name, size] of [['petit téléphone', [320, 568]], ['paysage', [844, 390]], ['paysage moyen', [740, 520]], ['grand carré', [720, 720]]]) {
+  test(`affichage ${name} (${size[0]}×${size[1]})`, async ({ page }) => {
+    test.skip(test.info().project.name !== 'telephone', 'formats extra testés une seule fois');
+    await page.setViewportSize({ width: size[0], height: size[1] });
+    await page.goto('puissance-4/');
+    await page.getByRole('button', { name: 'Jouer à deux sur ce téléphone' }).click();
+    const box = await page.locator('#p4-board').boundingBox();
+    // Le plateau ne passe pas sous la barre d'onglets (collée en haut).
+    const nav = await page.locator('nav.tabs').boundingBox();
+    expect(box.y).toBeGreaterThanOrEqual(nav.y + nav.height - 0.5);
+    expect(box.x + box.width).toBeLessThanOrEqual(size[0] + 0.5);
+    expect(box.y + box.height).toBeLessThanOrEqual(size[1] + 0.5);
+    const replay = await page.locator('#p4-replay').boundingBox();
+    expect(replay.y + replay.height).toBeLessThanOrEqual(size[1] + 0.5);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+  });
+}
