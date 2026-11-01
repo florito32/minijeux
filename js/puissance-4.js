@@ -98,12 +98,12 @@ function placeToken(r, c, player, animate) {
   const t = document.createElement('span');
   t.className = `p4-token p${player}`;
   if (animate) {
-    t.classList.add('drop');
+    t.classList.add('p4-drop');
     t.style.setProperty('--drop-from', String(r + 1));
     t.style.setProperty('--drop-time', `${0.18 + r * 0.05}s`);
   }
   cell.appendChild(t);
-  cell.classList.add('filled');
+  cell.classList.add('p4-filled');
 }
 
 /** Redessine tout le plateau à partir de l'état (sans animation). */
@@ -112,7 +112,7 @@ function renderBoard() {
     for (let c = 0; c < COLS; c++) {
       const v = state.board[r][c];
       const cell = cells[r][c];
-      cell.classList.remove('filled');
+      cell.classList.remove('p4-filled');
       cell.querySelector('.p4-token')?.remove();
       if (v) placeToken(r, c, v, false);
     }
@@ -122,8 +122,8 @@ function renderBoard() {
 }
 
 function markWin() {
-  boardEl.classList.toggle('over', state.over && state.winner !== 3);
-  for (const [r, c] of state.winCells || []) cells[r][c].querySelector('.p4-token')?.classList.add('win');
+  boardEl.classList.toggle('p4-over', state.over && state.winner !== 3);
+  for (const [r, c] of state.winCells || []) cells[r][c].querySelector('.p4-token')?.classList.add('p4-win');
 }
 
 /* ---------------------------------------------------------------------------
@@ -151,8 +151,8 @@ function updateUI() {
   $('name-2').textContent = playerName(2);
   $('pts-1').textContent = scores()[1];
   $('pts-2').textContent = scores()[2];
-  $('score-1').classList.toggle('active', !state.over && state.current === 1);
-  $('score-2').classList.toggle('active', !state.over && state.current === 2);
+  $('score-1').classList.toggle('p4-active', !state.over && state.current === 1);
+  $('score-2').classList.toggle('p4-active', !state.over && state.current === 2);
   $('mode-badge').textContent = state.mode === 'solo' ? LEVEL_NAMES[state.level] : 'À deux';
   boardEl.dataset.turn = String(state.current);
 
@@ -161,7 +161,7 @@ function updateUI() {
     const r = dropRow(state.board, c);
     const btn = colButtons[c];
     btn.disabled = locked || r === -1;
-    for (let rr = 0; rr < ROWS; rr++) cells[rr][c].classList.toggle('target', rr === r);
+    for (let rr = 0; rr < ROWS; rr++) cells[rr][c].classList.toggle('p4-target', rr === r);
     const free = r + 1;
     btn.setAttribute(
       'aria-label',
