@@ -4,9 +4,14 @@
 (function () {
   'use strict';
 
-  var VERSION = '2.2';
+  var VERSION = '2.3';
 
   var HISTORY = [
+    { v: '2.3', date: '2026-11-01', changes: [
+      'Avant chaque partie, choisis tes tables de multiplication (1 à 10) ; ton choix est mémorisé.',
+      'Le nombre à trouver change à chaque partie lancée, tiré dans les tables choisies.',
+      'Bouton « Sur téléphone » (sur ordinateur) : un QR code pour ouvrir le site sur un téléphone.'
+    ] },
     { v: '2.2', date: '2026-11-01', changes: [
       'Nouveau jeu : Puissance 4, dans un nouvel onglet.',
       'Contre l\u2019ordinateur avec 3 niveaux (Facile, Moyen, Difficile) ou à deux sur le même téléphone.',

@@ -42,6 +42,8 @@
       <li><a class="tab" href="../multiplication/"><span aria-hidden="true">✖️</span> Multiplication</a></li>
       <li><a class="tab" href="../puissance-4/" aria-current="page"><span aria-hidden="true">🔴</span> Puissance 4</a></li>
     </ul>
+    <!-- QR code : ouvrir le site sur un téléphone (bouton masqué sur les téléphones) -->
+    <button type="button" class="qr-btn" data-qr-open aria-haspopup="dialog"><span aria-hidden="true">📱</span> Sur téléphone</button>
   </div>
 </nav>
 
@@ -95,6 +97,14 @@
   </section>
 </main>
 
+<dialog class="qr-dialog" data-qr-dialog aria-labelledby="qr-titre">
+  <h2 id="qr-titre">Jouer sur un téléphone</h2>
+  <p>Scanne ce QR code avec l'appareil photo du téléphone.</p>
+  <img src="../icons/qr-site.svg" width="240" height="240" alt="QR code qui ouvre https://florito32.github.io/ludoaventura/">
+  <p class="qr-url">florito32.github.io/ludoaventura</p>
+  <form method="dialog"><button class="version-close">Fermer</button></form>
+</dialog>
+
 <footer>
   <div class="wrap">
     <p>Ludoaventura — petits jeux pour apprendre en s'amusant.</p>
@@ -103,6 +113,7 @@
 </footer>
 
 <script type="module" src="../js/puissance-4.js"></script>
+<script src="../js/qr.js" defer></script>
 <script src="../js/version.js" defer></script>
 <script src="../js/pwa.js" defer></script>
 </body>

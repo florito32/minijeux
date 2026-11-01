@@ -38,6 +38,8 @@
       <li><a class="tab" href="../multiplication/" aria-current="page"><span aria-hidden="true">✖️</span> Multiplication</a></li>
       <li><a class="tab" href="../puissance-4/"><span aria-hidden="true">🔴</span> Puissance 4</a></li>
     </ul>
+    <!-- QR code : ouvrir le site sur un téléphone (bouton masqué sur les téléphones) -->
+    <button type="button" class="qr-btn" data-qr-open aria-haspopup="dialog"><span aria-hidden="true">📱</span> Sur téléphone</button>
   </div>
 </nav>
 
@@ -56,7 +58,7 @@
         <span>Caisses : <b data-found>0</b> / <b data-needed>4</b></span>
       </div>
 
-      <div class="stage">
+      <div class="stage is-menu">
         <canvas data-canvas width="400" height="240" tabindex="0" role="img"
                 aria-label="Le niveau : un petit personnage court et saute sous des caisses marquées d'une multiplication.">
           Ce jeu a besoin d'un navigateur récent.
@@ -65,12 +67,30 @@
         <div class="overlay" data-overlay>
           <h2 data-overlay-title>Niveau 1</h2>
           <p data-overlay-text>Casse les caisses dont le résultat fait le nombre écrit en bas, puis rejoins le drapeau.</p>
+          <!-- Choix des tables, proposé avant chaque partie -->
+          <div class="tables" role="group" aria-labelledby="tables-titre">
+            <p class="tables-title" id="tables-titre">Tes tables :
+              <button type="button" class="link-btn" data-tables-all>Aucune</button></p>
+            <div class="chips">
+              <button type="button" class="chip" data-table="1" aria-pressed="true">1</button>
+              <button type="button" class="chip" data-table="2" aria-pressed="true">2</button>
+              <button type="button" class="chip" data-table="3" aria-pressed="true">3</button>
+              <button type="button" class="chip" data-table="4" aria-pressed="true">4</button>
+              <button type="button" class="chip" data-table="5" aria-pressed="true">5</button>
+              <button type="button" class="chip" data-table="6" aria-pressed="true">6</button>
+              <button type="button" class="chip" data-table="7" aria-pressed="true">7</button>
+              <button type="button" class="chip" data-table="8" aria-pressed="true">8</button>
+              <button type="button" class="chip" data-table="9" aria-pressed="true">9</button>
+              <button type="button" class="chip" data-table="10" aria-pressed="true">10</button>
+            </div>
+            <p class="tables-hint" data-tables-hint role="status"></p>
+          </div>
           <button class="btn btn-primary" type="button" data-start>Jouer</button>
         </div>
       </div>
 
       <!-- Le nombre à trouver, en bas de l'écran de jeu -->
-      <p class="target">Nombre à trouver : <strong data-target>24</strong></p>
+      <p class="target">Nombre à trouver : <strong data-target>?</strong></p>
 
       <!-- Commandes tactiles (téléphones et tablettes) -->
       <div class="pad">
@@ -86,6 +106,14 @@
   </div>
 </main>
 
+<dialog class="qr-dialog" data-qr-dialog aria-labelledby="qr-titre">
+  <h2 id="qr-titre">Jouer sur un téléphone</h2>
+  <p>Scanne ce QR code avec l'appareil photo du téléphone.</p>
+  <img src="../icons/qr-site.svg" width="240" height="240" alt="QR code qui ouvre https://florito32.github.io/ludoaventura/">
+  <p class="qr-url">florito32.github.io/ludoaventura</p>
+  <form method="dialog"><button class="version-close">Fermer</button></form>
+</dialog>
+
 <footer>
   <div class="wrap">
     <p>Ludoaventura — petits jeux pour apprendre en s'amusant.</p>
@@ -94,6 +122,7 @@
 </footer>
 
 <script src="../js/multiplication.js" defer></script>
+<script src="../js/qr.js" defer></script>
 <script src="../js/version.js" defer></script>
 <script src="../js/pwa.js" defer></script>
 </body>
