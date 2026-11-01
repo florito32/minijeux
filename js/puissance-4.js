@@ -1,21 +1,23 @@
 /*
  * Puissance 4 (Ludoaventura) – interface du jeu.
  * Gère les deux écrans (choix du mode / partie), l'affichage du plateau,
- * les tours de jeu et la sauvegarde de la partie dans le navigateur.
+ * et les tours de jeu. Rien n'est gardé en mémoire : chaque ouverture de la page
+ * (changement de jeu, rechargement, autre appareil) repart du menu avec des scores à zéro.
  * La version, l'installation et les mises à jour sont gérées par js/version.js et js/pwa.js.
  */
 import { ROWS, COLS, createBoard, dropRow, findWinner, isFull, chooseMove } from './puissance-4-engine.js';
 
 const $ = (id) => document.getElementById('p4-' + id);
-const STORAGE_KEY = 'ludoaventura-p4-v1';
+// Ancienne sauvegarde (v2.2 à v2.4) : effacée au chargement, la partie n'est plus gardée.
+const OLD_STORAGE_KEY = 'ludoaventura-p4-v1';
 const HUMAN = 1; // En mode solo, le joueur humain a les jetons rouges.
 const AI = 2;
 const LEVEL_NAMES = { facile: 'Facile', moyen: 'Moyen', difficile: 'Difficile' };
 
 /* ---------------------------------------------------------------------------
- * État du jeu (sauvegardé dans le navigateur pour survivre à une mise à jour)
+ * État du jeu (en mémoire seulement, pour la durée de la page)
  * ------------------------------------------------------------------------- */
-let state = loadState() || {
+let state = {
   mode: null, // 'solo' ou 'duo'
   level: 'moyen',
   board: createBoard(),
@@ -28,21 +30,10 @@ let state = loadState() || {
 };
 let aiThinking = false;
 
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-function saveState() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch {
-    /* stockage indisponible (navigation privée) : on continue sans sauvegarde */
-  }
+try {
+  localStorage.removeItem(OLD_STORAGE_KEY);
+} catch {
+  /* stockage indisponible : rien à effacer */
 }
 
 /** Clé des scores : chaque mode / niveau a son propre compteur. */
@@ -193,7 +184,6 @@ function play(c) {
   } else {
     state.current = state.current === 1 ? 2 : 1;
   }
-  saveState();
   // On attend la fin de la chute pour afficher la ligne gagnante.
   if (state.over) setTimeout(markWin, 450);
   updateUI();
@@ -228,7 +218,6 @@ function newGame({ keepStarter = false } = {}) {
   state.winner = 0;
   state.winCells = [];
   aiThinking = false;
-  saveState();
   renderBoard();
   maybeAiTurn();
 }
@@ -279,8 +268,7 @@ function vibrate(pattern) {
  * Démarrage
  * ------------------------------------------------------------------------- */
 buildBoard();
-if (hasGameInProgress() || (state.mode && state.over)) showGame();
-else showMenu();
+showMenu(); // on arrive toujours sur le choix du mode, avec une partie neuve
 
 // Accès pour les tests automatiques.
 window.__p4 = { get state() { return state; } };
