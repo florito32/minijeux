@@ -29,7 +29,7 @@ test('à deux : Rouge gagne en colonne, score, puis Jaune commence la suivante @
   for (const c of [0, 1, 0, 1, 0, 1, 0]) await press(page, c);
   await expect(page.locator('#p4-status')).toHaveText('Rouge gagne !');
   await expect(page.locator('#p4-pts-1')).toHaveText('1');
-  await expect(page.locator('.p4-token.win')).toHaveCount(4);
+  await expect(page.locator('.p4-token.p4-win')).toHaveCount(4);
   await expect(col(page, 3)).toBeDisabled();
   await page.getByRole('button', { name: 'Rejouer' }).click();
   await expect(tokens(page)).toHaveCount(0);
@@ -122,3 +122,24 @@ for (const [name, size] of [['petit téléphone', [320, 568]], ['paysage', [844,
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
   });
 }
+
+// Bug corrigé (v2.4) : sur téléphone, les emplacements bougeaient quand un jeton arrivait
+// (un style « .target » du site décalait la case visée). Les cases ne doivent jamais bouger.
+test('les emplacements ne bougent pas quand un jeton tombe @smoke', async ({ page }) => {
+  await page.goto('puissance-4/');
+  await page.getByRole('button', { name: 'Jouer à deux sur ce téléphone' }).click();
+  const positions = () => page.evaluate(() =>
+    [...document.querySelectorAll('.p4-cell')].map((c) => {
+      const r = c.getBoundingClientRect();
+      return [Math.round(r.x), Math.round(r.y), Math.round(r.width), Math.round(r.height)].join(',');
+    }));
+  const avant = await positions();
+  // Toutes les cases ont la même taille
+  expect(new Set(avant.map((p) => p.split(',').slice(2).join(','))).size).toBe(1);
+  for (const c of [3, 3, 2, 4, 6, 0]) {
+    await press(page, c);
+    expect(await positions()).toEqual(avant); // pendant la chute
+    await page.waitForTimeout(700);
+    expect(await positions()).toEqual(avant); // après la chute
+  }
+});

@@ -4,9 +4,12 @@
 (function () {
   'use strict';
 
-  var VERSION = '2.3';
+  var VERSION = '2.4';
 
   var HISTORY = [
+    { v: '2.4', date: '2026-11-01', changes: [
+      'Puissance 4 : les emplacements ne bougent plus sur téléphone quand un jeton tombe.'
+    ] },
     { v: '2.3', date: '2026-11-01', changes: [
       'Avant chaque partie, choisis tes tables de multiplication (1 à 10) ; ton choix est mémorisé.',
       'Le nombre à trouver change à chaque partie lancée, tiré dans les tables choisies.',
