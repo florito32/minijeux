@@ -27,5 +27,12 @@ Statuts : à faire / en cours / fait à valider / terminé / question en attente
 | 19 | Changer de thème : supprimer tout le contenu sur les éléphants | fait à valider (v2.0 : page `/elephants/`, icône éléphant, styles et tests associés retirés ; l'historique des versions garde la mention des anciennes versions) | ✅ 52/52 en local + CI (axe-core inclus) + test en ligne (PR #9) |
 | 20 | Garder des onglets pour créer des petits jeux | fait à valider (v2.0 : barre d'onglets en haut de chaque page, choix validé « barre d'onglets en haut » ; l'adresse racine ouvre directement le 1er onglet) | ✅ local + CI + test en ligne |
 | 21 | Commencer une page « jeu de multiplication » | fait à valider (v2.0, `/multiplication/`) — hypothèses à valider : tables de 1 à 10, questions au hasard, saisie au clavier numérique, score « bonnes réponses / total », correction affichée en cas d'erreur, nouvelle couleur bleue et nouvelle icône « × » | ✅ local + CI + test en ligne |
-| 22 | Attendre les nouvelles instructions de l'utilisateur pour le jeu de multiplication | question en attente | — |
+| 22 | Attendre les nouvelles instructions de l'utilisateur pour le jeu de multiplication | terminé (instructions reçues, lignes 25–30) | — |
 | 23 | Tâche planifiée de reprise pour cette session | terminé (nouvelle tâche toutes les 2 h ; l'ancienne, liée à la session précédente, est désactivée) | — |
+| 24 | « Débrouille-toi, je ferai des changements si besoin » : avancer avec des hypothèses raisonnables | terminé (règle appliquée, hypothèses notées « à valider ») | — |
+| 25 | Rendre le jeu plus ludique : aventure 2D façon jeu de plateforme | fait à valider (v2.1, PR à venir) — hypothèses : décor ciel/collines/sol, deux trous à sauter, trois marches en briques, drapeau de fin | ✅ 59/59 en local |
+| 26 | Un personnage qui court et qui saute | fait à valider — personnage original « Pousse » (boule verte, feuille, écharpe rouge) ; clavier ← → / Espace ↑, boutons tactiles ◀ ▶ Sauter | ✅ 59/59 en local |
+| 27 | En bas, un nombre à trouver | fait à valider — « Nombre à trouver » affiché sous l'écran de jeu | ✅ 59/59 en local |
+| 28 | Éclater des caisses portant une multiplication ; 1 caisse sur 3 correspond au nombre | fait à valider — 12 caisses dont 4 justes ; on casse en sautant par en dessous ; mauvaise caisse ou chute = −1 cœur (3 cœurs) ; le drapeau ne s'ouvre qu'avec toutes les bonnes caisses ; pièges choisis proches du nombre | ✅ 59/59 en local |
+| 29 | À chaque niveau, le nombre en bas change | fait à valider — liste `LEVELS` dans js/multiplication.js : un nombre par niveau | ✅ 59/59 en local |
+| 30 | Pour l'instant, un seul niveau | fait à valider — niveau 1 : nombre 24 ; caisses tirées au hasard à chaque partie | ✅ 59/59 en local |
