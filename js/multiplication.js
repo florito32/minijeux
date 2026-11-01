@@ -20,7 +20,8 @@
   var LEVELS = [
     { boxes: 12 }                  // 12 caisses → 4 bonnes (1 sur 3)
   ];
-  var TABLES_KEY = 'ludoaventura-tables';
+  // v2 : les choix enregistrés avant la v2.6 (toutes les tables cochées par défaut) sont ignorés.
+  var TABLES_KEY = 'ludoaventura-tables-v2';
 
   // Décor du niveau 1 (coordonnées du monde, en pixels logiques).
   var WORLD_W = 2600;
@@ -122,8 +123,10 @@
 
   function resetLevel() {
     level = LEVELS[levelIndex];
-    target = pickTarget(tables, target);
-    boxes = makeBoxes(target, level.boxes, tables);
+    // Sans table choisie (aperçu derrière l'écran de choix), on dessine un niveau avec toutes les tables.
+    var tbls = tables.length ? tables : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    target = pickTarget(tbls, target);
+    boxes = makeBoxes(target, level.boxes, tbls);
     needed = boxes.filter(function (b) { return b.correct; }).length;
     found = 0; hearts = HEARTS;
     player = { x: 60, y: GROUND - 30, w: 20, h: 30, vx: 0, vy: 0, onGround: true, face: 1, anim: 0, hurt: 0 };
@@ -478,8 +481,8 @@
       if (Array.isArray(saved) && saved.length) {
         return saved.filter(function (n) { return n >= 1 && n <= 10; });
       }
-    } catch (e) { /* stockage indisponible : on garde toutes les tables */ }
-    return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    } catch (e) { /* stockage indisponible : aucun choix mémorisé */ }
+    return [];                     // par défaut aucune table : le joueur allume celles qu'il veut
   }
   function saveTables() {
     try { localStorage.setItem(TABLES_KEY, JSON.stringify(tables)); } catch (e) { /* sans importance */ }
@@ -490,13 +493,17 @@
     });
     var none = !tables.length;
     startBtn.disabled = none;
-    tablesHint.textContent = none ? 'Choisis au moins une table pour jouer.' : '';
+    tablesHint.textContent = none ? 'Touche une ou plusieurs tables pour jouer.' : '';
     allBtn.textContent = tables.length === 10 ? 'Aucune' : 'Toutes';
   }
   tableBtns.forEach(function (btn) {
     btn.addEventListener('click', function () {
       var n = Number(btn.getAttribute('data-table')), i = tables.indexOf(n);
-      if (i >= 0) tables.splice(i, 1); else tables.push(n);
+      // Toutes les tables allumées : un clic sur un chiffre ne garde que celui-là
+      // (sinon cliquer sur « 3 » éteindrait la table de 3 au lieu de la choisir).
+      if (tables.length === 10) tables = [n];
+      else if (i >= 0) tables.splice(i, 1);
+      else tables.push(n);
       tables.sort(function (x, y) { return x - y; });
       saveTables(); renderTables();
     });
