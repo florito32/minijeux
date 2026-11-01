@@ -30,12 +30,12 @@ Statuts : à faire / en cours / fait à valider / terminé / question en attente
 | 22 | Attendre les nouvelles instructions de l'utilisateur pour le jeu de multiplication | terminé (instructions reçues, lignes 25–30) | — |
 | 23 | Tâche planifiée de reprise pour cette session | terminé (nouvelle tâche toutes les 2 h ; l'ancienne, liée à la session précédente, est désactivée) | — |
 | 24 | « Débrouille-toi, je ferai des changements si besoin » : avancer avec des hypothèses raisonnables | terminé (règle appliquée, hypothèses notées « à valider ») | — |
-| 25 | Rendre le jeu plus ludique : aventure 2D façon jeu de plateforme | fait à valider (v2.1, PR à venir) — hypothèses : décor ciel/collines/sol, deux trous à sauter, trois marches en briques, drapeau de fin | ✅ 59/59 en local |
-| 26 | Un personnage qui court et qui saute | fait à valider — personnage original « Pousse » (boule verte, feuille, écharpe rouge) ; clavier ← → / Espace ↑, boutons tactiles ◀ ▶ Sauter | ✅ 59/59 en local |
-| 27 | En bas, un nombre à trouver | fait à valider — « Nombre à trouver » affiché sous l'écran de jeu | ✅ 59/59 en local |
-| 28 | Éclater des caisses portant une multiplication ; 1 caisse sur 3 correspond au nombre | fait à valider — 12 caisses dont 4 justes ; on casse en sautant par en dessous ; mauvaise caisse ou chute = −1 cœur (3 cœurs) ; le drapeau ne s'ouvre qu'avec toutes les bonnes caisses ; pièges choisis proches du nombre | ✅ 59/59 en local |
-| 29 | À chaque niveau, le nombre en bas change | fait à valider — liste `LEVELS` dans js/multiplication.js : un nombre par niveau | ✅ 59/59 en local |
-| 30 | Pour l'instant, un seul niveau | fait à valider — niveau 1 : nombre 24 ; caisses tirées au hasard à chaque partie | ✅ 59/59 en local |
+| 25 | Rendre le jeu plus ludique : aventure 2D façon jeu de plateforme | fait à valider (v2.1, PR #11) — hypothèses : décor ciel/collines/sol, deux trous à sauter, trois marches en briques, drapeau de fin | ✅ 59/59 en local + CI + test en ligne (PR #11) |
+| 26 | Un personnage qui court et qui saute | fait à valider — personnage original « Pousse » (boule verte, feuille, écharpe rouge) ; clavier ← → / Espace ↑, boutons tactiles ◀ ▶ Sauter | ✅ 59/59 en local + CI + test en ligne (PR #11) |
+| 27 | En bas, un nombre à trouver | fait à valider — « Nombre à trouver » affiché sous l'écran de jeu | ✅ 59/59 en local + CI + test en ligne (PR #11) |
+| 28 | Éclater des caisses portant une multiplication ; 1 caisse sur 3 correspond au nombre | fait à valider — 12 caisses dont 4 justes ; on casse en sautant par en dessous ; mauvaise caisse ou chute = −1 cœur (3 cœurs) ; le drapeau ne s'ouvre qu'avec toutes les bonnes caisses ; pièges choisis proches du nombre | ✅ 59/59 en local + CI + test en ligne (PR #11) |
+| 29 | À chaque niveau, le nombre en bas change | fait à valider — liste `LEVELS` dans js/multiplication.js : un nombre par niveau | ✅ 59/59 en local + CI + test en ligne (PR #11) |
+| 30 | Pour l'instant, un seul niveau | fait à valider — niveau 1 : nombre 24 ; caisses tirées au hasard à chaque partie | ✅ 59/59 en local + CI + test en ligne (PR #11) |
 | 31 | Créer des jeux téléchargeables sur Android : expliquer le langage et le fonctionnement | terminé (réponse : HTML/CSS/JavaScript en PWA installable, emballage APK possible plus tard avec PWABuilder/Bubblewrap) | — |
 | 32 | Faire le jeu Puissance 4 | fait à valider (v2.2, onglet `/puissance-4/`) | ✅ 90/90 en local (moteur + parcours + 8 formats d'écran) + CI |
 | 33 | Puissance 4 : jouer contre l'ordinateur et à deux sur le même téléphone | fait à valider (v2.2) | ✅ |
@@ -43,3 +43,6 @@ Statuts : à faire / en cours / fait à valider / terminé / question en attente
 | 35 | Puissance 4 : jetons rouges et jaunes | fait à valider (v2.2) | ✅ |
 | 36 | Puissance 4 : hébergé dans Ludoaventura plutôt que dans un dépôt séparé | terminé (choix de l'utilisateur ; le dépôt `puissance-4` créé sur GitHub n'est pas accessible à Claude et peut être supprimé ou laissé vide) | — |
 | 37 | Puissance 4 : hypothèses à valider | question en attente — en solo le joueur a les rouges ; le premier joueur alterne à chaque partie ; scores séparés par niveau et pour le mode à deux | — |
+| 38 | Ajouter un QR code sur la page pour ouvrir le site depuis un téléphone | fait à valider (v2.3) — bouton « 📱 Sur téléphone » en haut à droite sur ordinateur (masqué sur téléphone), QR code vers https://florito32.github.io/ludoaventura/ (image fixe `icons/qr-site.svg`, décodage vérifié) | ✅ 68/68 en local |
+| 39 | À chaque partie lancée, le nombre à trouver change, quel que soit le niveau | fait à valider (v2.3) — nouveau nombre à chaque « Jouer » / « Rejouer », différent du précédent ; « ? » affiché avant le lancement ; règle valable pour tous les niveaux | ✅ 68/68 en local |
+| 40 | Avant chaque partie, le joueur choisit ses tables (1 à 10) en cliquant sur les chiffres | fait à valider (v2.3) — 10 boutons sur l'écran de début et de fin, bouton « Toutes / Aucune », au moins une table obligatoire, choix mémorisé sur l'appareil ; une caisse « de la table de 7 » = 7×n ou n×7 | ✅ 68/68 en local |

@@ -2,6 +2,8 @@
 // Le personnage court et saute ; on casse les caisses en les frappant par en dessous.
 // Une caisse sur trois porte une multiplication égale au nombre à trouver (affiché sous le jeu).
 // Le drapeau de fin s'ouvre quand toutes les bonnes caisses sont cassées.
+// Avant chaque partie, le joueur choisit ses tables (1 à 10) ; le nombre à trouver
+// est tiré au hasard dans ces tables et change à chaque partie lancée.
 (function () {
   'use strict';
 
@@ -13,10 +15,12 @@
   var HEARTS = 3;
   var BOX_W = 52, BOX_H = 30;
 
-  // Niveaux : ajouter une entrée par nouveau niveau (le nombre à trouver change à chaque niveau).
+  // Niveaux : ajouter une entrée par nouveau niveau (décor, nombre de caisses…).
+  // Le nombre à trouver n'est pas fixé ici : il est tiré au hasard à chaque partie.
   var LEVELS = [
-    { target: 24, boxes: 12 }      // 12 caisses → 4 bonnes (1 sur 3)
+    { boxes: 12 }                  // 12 caisses → 4 bonnes (1 sur 3)
   ];
+  var TABLES_KEY = 'ludoaventura-tables';
 
   // Décor du niveau 1 (coordonnées du monde, en pixels logiques).
   var WORLD_W = 2600;
@@ -39,6 +43,7 @@
   var canvas = document.querySelector('[data-canvas]');
   var ctx = canvas.getContext('2d');
   var overlay = document.querySelector('[data-overlay]');
+  var stage = canvas.parentNode;
   var overlayTitle = document.querySelector('[data-overlay-title]');
   var overlayText = document.querySelector('[data-overlay-text]');
   var startBtn = document.querySelector('[data-start]');
@@ -48,9 +53,13 @@
   var targetEl = document.querySelector('[data-target]');
   var levelEl = document.querySelector('[data-level]');
   var liveEl = document.querySelector('[data-live]');
+  var tableBtns = Array.prototype.slice.call(document.querySelectorAll('[data-table]'));
+  var allBtn = document.querySelector('[data-tables-all]');
+  var tablesHint = document.querySelector('[data-tables-hint]');
 
   /* ---------- État du jeu ---------- */
-  var levelIndex = 0, level, boxes, player, camX, hearts, found, needed;
+  var levelIndex = 0, level, boxes, player, camX, hearts, found, needed, target = 0;
+  var tables = loadTables();       // tables choisies par le joueur
   var status = 'ready';            // ready | playing | won | lost
   var particles = [], floats = [];
   var hintCooldown = 0, lastSafe = { x: 60, y: GROUND - 30 };
@@ -64,23 +73,44 @@
     return a;
   }
 
-  // Tire les multiplications : exactement 1 caisse sur 3 donne le nombre cible.
-  function makeBoxes(target, count) {
-    var nGood = Math.round(count / 3), nBad = count - nGood;
-    var good = [], close = [], far = [];
+  // Toutes les multiplications possibles avec les tables choisies (ex. table de 7 : 7×1…7×10 et 1×7…10×7).
+  function pairsFor(tbls) {
+    var list = [];
     for (var a = 1; a <= 10; a++) {
       for (var b = 1; b <= 10; b++) {
-        var p = a * b;
-        if (p === target) good.push([a, b]);
-        else if (Math.abs(p - target) <= 15) close.push([a, b]);   // pièges proches du résultat
-        else far.push([a, b]);
+        if (tbls.indexOf(a) >= 0 || tbls.indexOf(b) >= 0) list.push([a, b]);
       }
     }
+    return list;
+  }
+
+  // Nouveau nombre à trouver, tiré dans les tables choisies, différent du précédent si possible.
+  // On préfère les nombres qui s'obtiennent de plusieurs façons (caisses plus variées).
+  function pickTarget(tbls, previous) {
+    var count = {};
+    pairsFor(tbls).forEach(function (pr) { var p = pr[0] * pr[1]; count[p] = (count[p] || 0) + 1; });
+    var all = Object.keys(count).map(Number);
+    var varied = all.filter(function (p) { return count[p] >= 2 && p !== previous; });
+    var pool = varied.length ? varied : all.filter(function (p) { return p !== previous; });
+    if (!pool.length) pool = all;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  // Tire les multiplications : exactement 1 caisse sur 3 donne le nombre cible.
+  function makeBoxes(goal, count, tbls) {
+    var nGood = Math.round(count / 3), nBad = count - nGood;
+    var good = [], close = [], far = [];
+    pairsFor(tbls).forEach(function (pr) {
+      var p = pr[0] * pr[1];
+      if (p === goal) good.push(pr);
+      else if (Math.abs(p - goal) <= 15) close.push(pr);   // pièges proches du résultat
+      else far.push(pr);
+    });
     shuffle(good); shuffle(close); shuffle(far);
     var picks = [];
     for (var i = 0; i < nGood; i++) picks.push({ pair: good[i % good.length], correct: true });
-    var bad = close.concat(far).slice(0, nBad);
-    bad.forEach(function (pr) { picks.push({ pair: pr, correct: false }); });
+    var bad = close.concat(far);
+    for (var j = 0; j < nBad; j++) picks.push({ pair: bad[j % bad.length], correct: false });
     shuffle(picks);
     return SLOTS.slice(0, count).map(function (s, i) {
       return {
@@ -92,13 +122,14 @@
 
   function resetLevel() {
     level = LEVELS[levelIndex];
-    boxes = makeBoxes(level.target, level.boxes);
+    target = pickTarget(tables, target);
+    boxes = makeBoxes(target, level.boxes, tables);
     needed = boxes.filter(function (b) { return b.correct; }).length;
     found = 0; hearts = HEARTS;
     player = { x: 60, y: GROUND - 30, w: 20, h: 30, vx: 0, vy: 0, onGround: true, face: 1, anim: 0, hurt: 0 };
     lastSafe = { x: 60, y: GROUND - 30 };
     camX = 0; particles = []; floats = [];
-    targetEl.textContent = level.target;
+    targetEl.textContent = target;
     levelEl.textContent = levelIndex + 1;
     updateHud();
   }
@@ -118,20 +149,23 @@
     overlayText.textContent = text;
     startBtn.textContent = button;
     overlay.hidden = false;
+    stage.classList.add('is-menu');
     startBtn.focus();
   }
 
   function start() {
-    if (status === 'won' || status === 'lost') resetLevel();
+    if (!tables.length) return;
+    resetLevel();                  // chaque partie lancée : nouveau nombre et nouvelles caisses
     status = 'playing';
     overlay.hidden = true;
+    stage.classList.remove('is-menu');
     canvas.focus();
-    announce('Niveau ' + (levelIndex + 1) + ' : casse les caisses qui font ' + level.target + '.');
+    announce('Niveau ' + (levelIndex + 1) + ' : casse les caisses qui font ' + target + '.');
   }
 
   function win() {
     status = 'won';
-    showOverlay('Niveau réussi ! 🎉', 'Tu as trouvé les ' + needed + ' caisses qui font ' + level.target + '.', 'Rejouer');
+    showOverlay('Niveau réussi ! 🎉', 'Tu as trouvé les ' + needed + ' caisses qui font ' + target + '.', 'Rejouer');
     announce('Niveau réussi !');
   }
 
@@ -175,7 +209,7 @@
       updateHud();
     } else {
       floats.push({ x: cx, y: b.y, text: '✗ ' + calc, color: '#b3261e', t: 1.4 });
-      announce('Raté : ' + calc + ', pas ' + level.target + '. Tu perds un cœur.');
+      announce('Raté : ' + calc + ', pas ' + target + '. Tu perds un cœur.');
       loseHeart();
     }
   }
@@ -437,6 +471,41 @@
 
   startBtn.addEventListener('click', start);
 
+  /* ---------- Choix des tables (avant chaque partie) ---------- */
+  function loadTables() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(TABLES_KEY));
+      if (Array.isArray(saved) && saved.length) {
+        return saved.filter(function (n) { return n >= 1 && n <= 10; });
+      }
+    } catch (e) { /* stockage indisponible : on garde toutes les tables */ }
+    return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  }
+  function saveTables() {
+    try { localStorage.setItem(TABLES_KEY, JSON.stringify(tables)); } catch (e) { /* sans importance */ }
+  }
+  function renderTables() {
+    tableBtns.forEach(function (btn) {
+      btn.setAttribute('aria-pressed', tables.indexOf(Number(btn.getAttribute('data-table'))) >= 0 ? 'true' : 'false');
+    });
+    var none = !tables.length;
+    startBtn.disabled = none;
+    tablesHint.textContent = none ? 'Choisis au moins une table pour jouer.' : '';
+    allBtn.textContent = tables.length === 10 ? 'Aucune' : 'Toutes';
+  }
+  tableBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var n = Number(btn.getAttribute('data-table')), i = tables.indexOf(n);
+      if (i >= 0) tables.splice(i, 1); else tables.push(n);
+      tables.sort(function (x, y) { return x - y; });
+      saveTables(); renderTables();
+    });
+  });
+  allBtn.addEventListener('click', function () {
+    tables = tables.length === 10 ? [] : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    saveTables(); renderTables();
+  });
+
   /* ---------- Taille de l'écran de jeu (net sur écrans haute densité) ---------- */
   function resize() {
     var r = canvas.getBoundingClientRect();
@@ -451,7 +520,7 @@
   window.__jeu = {
     etat: function () {
       return {
-        status: status, target: level.target, hearts: hearts, found: found, needed: needed,
+        status: status, target: target, tables: tables.slice(), hearts: hearts, found: found, needed: needed,
         player: { x: player.x, y: player.y, vx: player.vx, vy: player.vy, onGround: player.onGround },
         boxes: boxes.map(function (b) { return { a: b.a, b: b.b, correct: b.correct, broken: b.broken }; })
       };
@@ -466,7 +535,9 @@
     placerAuDrapeau: function () { player.x = FLAG_X - 40; player.y = GROUND - 30; player.vx = 0; player.vy = 0; }
   };
 
+  renderTables();
   resetLevel();
+  targetEl.textContent = '?';      // le nombre est révélé au lancement de la partie
   resize();
   requestAnimationFrame(frame);
 })();
