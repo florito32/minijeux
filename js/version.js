@@ -4,9 +4,13 @@
 (function () {
   'use strict';
 
-  var VERSION = '2.6';
+  var VERSION = '2.7';
 
   var HISTORY = [
+    { v: '2.7', date: '2026-11-01', changes: [
+      'Correction : toucher un chiffre choisit bien cette table (avant, toutes étaient cochées et un clic sur 3 retirait la table de 3).',
+      'Au départ aucune table n\u2019est cochée ; « Toutes » coche tout, puis un clic sur un chiffre ne garde que celui-là.'
+    ] },
     { v: '2.6', date: '2026-11-01', changes: [
       'Puissance 4 : en revenant d\u2019un autre jeu, en rechargeant ou en rouvrant l\u2019application, la partie et les scores repartent de zéro.'
     ] },

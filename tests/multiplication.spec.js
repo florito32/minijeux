@@ -7,6 +7,7 @@ const etat = (page) => page.evaluate(() => window.__jeu.etat());
 // Ouvre le jeu et clique sur « Jouer ».
 async function demarrer(page) {
   await page.goto('multiplication/aventure/');
+  await page.getByRole('button', { name: 'Toutes' }).click();   // toutes les tables
   await page.getByRole('button', { name: 'Jouer' }).click();
   await expect.poll(async () => (await etat(page)).status).toBe('playing');
 }
@@ -60,6 +61,7 @@ test('le nombre à trouver est affiché sous le jeu et 1 caisse sur 3 lui corres
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('multiplication/aventure/');
   await expect(page.locator('[data-target]')).toHaveText('?');   // révélé au lancement
+  await page.getByRole('button', { name: 'Toutes' }).click();
   await page.getByRole('button', { name: 'Jouer' }).click();
   const s = await etat(page);
   await expect(page.locator('[data-target]')).toHaveText(String(s.target));
@@ -77,25 +79,55 @@ test('le nombre à trouver est affiché sous le jeu et 1 caisse sur 3 lui corres
   expect(errors).toEqual([]);
 });
 
-test('choix des tables : seules les tables choisies apparaissent, choix mémorisé', async ({ page }) => {
+test('choix des tables : au départ rien n\'est coché, « Jouer » attend un choix', async ({ page }) => {
   await page.goto('multiplication/aventure/');
   const groupe = page.getByRole('group', { name: /Tes tables/ });
-  await groupe.getByRole('button', { name: 'Aucune' }).click();
+  for (let n = 1; n <= 10; n++) {
+    await expect(groupe.getByRole('button', { name: String(n), exact: true })).toHaveAttribute('aria-pressed', 'false');
+  }
   await expect(page.getByRole('button', { name: 'Jouer' })).toBeDisabled();
-  await expect(page.locator('[data-tables-hint]')).toHaveText('Choisis au moins une table pour jouer.');
+  await expect(page.locator('[data-tables-hint]')).toHaveText('Touche une ou plusieurs tables pour jouer.');
+});
+
+// Bug corrigé (v2.6) : cliquer sur « 3 » éteignait la table de 3 au lieu de la choisir.
+test('bug : choisir seulement la table de 3 donne un nombre de la table de 3', async ({ page }) => {
+  await page.goto('multiplication/aventure/');
+  const groupe = page.getByRole('group', { name: /Tes tables/ });
+  await groupe.getByRole('button', { name: '3', exact: true }).click();
+  await expect(groupe.getByRole('button', { name: '3', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  for (let partie = 0; partie < 5; partie++) {
+    await page.getByRole('button', { name: /Jouer|Rejouer/ }).click();
+    const s = await etat(page);
+    expect(s.tables).toEqual([3]);
+    expect(s.target % 3).toBe(0);
+    for (const b of s.boxes) expect(b.a === 3 || b.b === 3).toBe(true);
+    // Revenir à l'écran de choix : perdre 3 cœurs
+    const mauvaises = s.boxes.map((b, k) => (b.correct ? -1 : k)).filter((k) => k >= 0).slice(0, 3);
+    for (const k of mauvaises) await casser(page, k);
+  }
+});
+
+test('« Toutes » puis un clic sur un chiffre : seule cette table reste choisie', async ({ page }) => {
+  await page.goto('multiplication/aventure/');
+  const groupe = page.getByRole('group', { name: /Tes tables/ });
+  await groupe.getByRole('button', { name: 'Toutes' }).click();
+  await expect(groupe.getByRole('button', { name: '9', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await groupe.getByRole('button', { name: '7', exact: true }).click();
   await expect(groupe.getByRole('button', { name: '7', exact: true })).toHaveAttribute('aria-pressed', 'true');
-  await expect(groupe.getByRole('button', { name: '3', exact: true })).toHaveAttribute('aria-pressed', 'false');
+  await expect(groupe.getByRole('button', { name: '9', exact: true })).toHaveAttribute('aria-pressed', 'false');
+  // Plusieurs tables : les clics suivants ajoutent / retirent
+  await groupe.getByRole('button', { name: '8', exact: true }).click();
   await page.getByRole('button', { name: 'Jouer' }).click();
   const s = await etat(page);
-  expect(s.tables).toEqual([7]);
-  expect(s.target % 7).toBe(0);
-  for (const b of s.boxes) expect(b.a === 7 || b.b === 7).toBe(true);
-  expect(s.boxes.filter((b) => b.correct).length * 3).toBe(s.boxes.length);
+  expect(s.tables).toEqual([7, 8]);
+  expect(s.target % 7 === 0 || s.target % 8 === 0).toBe(true);
+  for (const b of s.boxes) expect([b.a, b.b].some((x) => x === 7 || x === 8)).toBe(true);
   // Le choix est gardé au rechargement
   await page.reload();
-  await expect(page.getByRole('group', { name: /Tes tables/ }).getByRole('button', { name: '7', exact: true })).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByRole('group', { name: /Tes tables/ }).getByRole('button', { name: '2', exact: true })).toHaveAttribute('aria-pressed', 'false');
+  const g2 = page.getByRole('group', { name: /Tes tables/ });
+  await expect(g2.getByRole('button', { name: '7', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(g2.getByRole('button', { name: '8', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(g2.getByRole('button', { name: '2', exact: true })).toHaveAttribute('aria-pressed', 'false');
 });
 
 test('chaque partie lancée change le nombre à trouver', async ({ page }) => {
@@ -195,6 +227,7 @@ test('écran de jeu, nombre et commandes tiennent dans l\'écran, sans défileme
   // Écran de début : le choix des tables et le bouton Jouer sont visibles sans défiler.
   await expect(page.getByRole('button', { name: 'Jouer' })).toBeInViewport({ ratio: 1 });
   await expect(page.getByRole('button', { name: '10', exact: true })).toBeInViewport({ ratio: 1 });
+  await page.getByRole('button', { name: 'Toutes' }).click();
   await page.getByRole('button', { name: 'Jouer' }).click();
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth
