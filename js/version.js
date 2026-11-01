@@ -4,9 +4,14 @@
 (function () {
   'use strict';
 
-  var VERSION = '1.5';
+  var VERSION = '2.0';
 
   var HISTORY = [
+    { v: '2.0', date: '2026-11-01', changes: [
+      'Ludoaventura devient un site de petits jeux : tout le contenu sur les éléphants est retiré.',
+      'Nouvelle barre d\u2019onglets en haut de page, un onglet par jeu.',
+      'Premier jeu : les tables de multiplication (1 à 10), avec score.'
+    ] },
     { v: '1.5', date: '2026-10-27', changes: [
       'Éléphants : chaque chiffre renvoie à sa source, nouvelle section « Sources ».',
       'Chiffres corrigés d\u2019après les sources (nourriture ≈ 150 kg/jour, eau 100–200 L, sommeil ≈ 2 h, trompe ≈ 90 000 faisceaux musculaires…).'

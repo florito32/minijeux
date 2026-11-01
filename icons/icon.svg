@@ -1,15 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- Icône Ludoaventura : éléphant stylisé sur fond terre cuite (zone sûre « maskable » respectée) -->
-  <rect width="512" height="512" fill="#b5652b"/>
-  <g fill="#f6f1e7">
-    <ellipse cx="276" cy="262" rx="112" ry="78"/>
-    <rect x="188" y="292" width="34" height="80" rx="14"/>
-    <rect x="236" y="300" width="32" height="72" rx="14"/>
-    <rect x="296" y="300" width="32" height="72" rx="14"/>
-    <rect x="340" y="292" width="34" height="80" rx="14"/>
-    <circle cx="180" cy="228" r="56"/>
-    <path d="M140 244 C122 290, 126 336, 150 356 C158 362, 168 356, 164 348 C146 326, 146 292, 164 260 Z"/>
+  <!-- Icône Ludoaventura : signe « × » sur fond bleu (zone sûre « maskable » respectée) -->
+  <rect width="512" height="512" fill="#2f5bd3"/>
+  <circle cx="256" cy="256" r="150" fill="#ffffff" opacity=".14"/>
+  <g stroke="#ffffff" stroke-width="44" stroke-linecap="round">
+    <line x1="186" y1="186" x2="326" y2="326"/>
+    <line x1="326" y1="186" x2="186" y2="326"/>
   </g>
-  <path d="M202 186 C248 178, 266 222, 252 262 C244 284, 208 288, 198 266 Z" fill="#e3d8c6"/>
-  <circle cx="168" cy="218" r="7" fill="#2b2620"/>
 </svg>

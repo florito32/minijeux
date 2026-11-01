@@ -2,7 +2,7 @@
 const { test, expect } = require('@playwright/test');
 
 test('affiche la version et ouvre l\'historique au clic @smoke', async ({ page }) => {
-  await page.goto('./');
+  await page.goto('multiplication/');
   const badge = page.locator('.version-badge');
   await badge.scrollIntoViewIfNeeded();
   await expect(badge).toBeVisible();

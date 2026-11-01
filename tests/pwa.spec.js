@@ -17,7 +17,7 @@ test('manifeste et icônes accessibles @smoke', async ({ page, request }) => {
 });
 
 test('service worker actif et page disponible hors ligne', async ({ page, context }) => {
-  await page.goto('./');
+  await page.goto('multiplication/');
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.reload(); // la page est maintenant contrôlée et mise en cache
   await expect.poll(() => page.evaluate(() => !!navigator.serviceWorker.controller)).toBe(true);
@@ -27,8 +27,8 @@ test('service worker actif et page disponible hors ligne', async ({ page, contex
   await context.setOffline(false);
 });
 
-test('le service worker s\'enregistre aussi depuis une aventure', async ({ page }) => {
-  await page.goto('elephants/');
+test('le service worker couvre tout le site depuis un jeu', async ({ page }) => {
+  await page.goto('multiplication/');
   const scope = await page.evaluate(() => navigator.serviceWorker.ready.then((r) => r.scope));
-  expect(new URL(scope).pathname).toBe(new URL('./', page.url()).pathname.replace(/elephants\/$/, ''));
+  expect(new URL(scope).pathname).toBe(new URL('./', page.url()).pathname.replace(/multiplication\/$/, ''));
 });
