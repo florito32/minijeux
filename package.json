@@ -1,11 +1,11 @@
 {
-  "name": "ludoaventura",
+  "name": "minijeux",
   "version": "1.0.0",
   "private": true,
-  "description": "Ludoaventura — aventures ludiques et documentaires (site statique GitHub Pages).",
+  "description": "Minijeux — aventures ludiques et documentaires (site statique GitHub Pages).",
   "scripts": {
     "test": "playwright test",
-    "test:live": "BASE_URL=https://florito32.github.io/ludoaventura/ playwright test --grep @smoke"
+    "test:live": "BASE_URL=https://florito32.github.io/minijeux/ playwright test --grep @smoke"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",

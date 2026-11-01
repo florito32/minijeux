@@ -1,4 +1,4 @@
-# CLAUDE.md — Comment on travaille sur ludoaventura
+# CLAUDE.md — Comment on travaille sur minijeux
 
 À lire en premier à chaque session, avec `BACKLOG.md`.
 

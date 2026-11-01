@@ -1,6 +1,6 @@
 {
-  "name": "Ludoaventura",
-  "short_name": "Ludoaventura",
+  "name": "Minijeux",
+  "short_name": "Minijeux",
   "description": "Petits jeux pour apprendre en s'amusant — tables de multiplication et Puissance 4.",
   "lang": "fr",
   "start_url": "./multiplication/",

@@ -1,5 +1,5 @@
 /*
- * Puissance 4 (Ludoaventura) – interface du jeu.
+ * Puissance 4 (Minijeux) – interface du jeu.
  * Gère les deux écrans (choix du mode / partie), l'affichage du plateau,
  * et les tours de jeu. Rien n'est gardé en mémoire : chaque ouverture de la page
  * (changement de jeu, rechargement, autre appareil) repart du menu avec des scores à zéro.
