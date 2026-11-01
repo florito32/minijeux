@@ -4,9 +4,12 @@
 (function () {
   'use strict';
 
-  var VERSION = '2.5';
+  var VERSION = '2.6';
 
   var HISTORY = [
+    { v: '2.6', date: '2026-11-01', changes: [
+      'Puissance 4 : en revenant d\u2019un autre jeu, en rechargeant ou en rouvrant l\u2019application, la partie et les scores repartent de zéro.'
+    ] },
     { v: '2.5', date: '2026-11-01', changes: [
       'L\u2019onglet Multiplication ouvre une page avec les jeux de multiplication en vignettes.',
       'Le jeu de plateforme devient la première vignette (adresse : /multiplication/aventure/), avec un lien de retour.'

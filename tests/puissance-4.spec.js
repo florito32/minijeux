@@ -60,15 +60,67 @@ test('une colonne pleine est désactivée', async ({ page }) => {
   await expect(col(page, 6)).toHaveAttribute('aria-label', /pleine/);
 });
 
-test('la partie en cours est conservée après rechargement', async ({ page }) => {
+// Demande (v2.6) : la partie et les scores repartent toujours de zéro quand on revient sur le jeu.
+async function partieAvecVictoire(page) {
+  await page.goto('puissance-4/');
+  await page.getByRole('button', { name: 'Jouer à deux sur ce téléphone' }).click();
+  for (const c of [0, 1, 0, 1, 0, 1, 0]) await press(page, c);
+  await expect(page.locator('#p4-pts-1')).toHaveText('1');
+  await page.getByRole('button', { name: 'Rejouer' }).click();
+  await press(page, 2);
+}
+async function attendDepartAZero(page) {
+  await expect(page.getByRole('button', { name: "Jouer contre l'ordinateur" })).toBeVisible();
+  await expect(page.locator('#p4-game')).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Reprendre la partie en cours' })).toBeHidden();
+  await page.getByRole('button', { name: 'Jouer à deux sur ce téléphone' }).click();
+  await expect(tokens(page)).toHaveCount(0);
+  await expect(page.locator('#p4-pts-1')).toHaveText('0');
+  await expect(page.locator('#p4-pts-2')).toHaveText('0');
+  await expect(page.locator('#p4-status')).toHaveText('Au tour de Rouge');
+}
+
+test('aller sur un autre jeu puis revenir : la partie repart de zéro @smoke', async ({ page }) => {
+  await partieAvecVictoire(page);
+  const nav = page.getByRole('navigation', { name: 'Jeux' });
+  await nav.getByRole('link', { name: /Multiplication/ }).click();
+  await expect(page).toHaveURL(/\/multiplication\//);
+  await page.getByRole('navigation', { name: 'Jeux' }).getByRole('link', { name: /Puissance 4/ }).click();
+  await attendDepartAZero(page);
+});
+
+test('bouton « précédent » après un autre jeu : la partie repart de zéro', async ({ page }) => {
+  await partieAvecVictoire(page);
+  await page.getByRole('navigation', { name: 'Jeux' }).getByRole('link', { name: /Multiplication/ }).click();
+  await expect(page).toHaveURL(/\/multiplication\//);
+  await page.goBack();
+  await expect(page).toHaveURL(/\/puissance-4\//);
+  await attendDepartAZero(page);
+});
+
+test('recharger ou rouvrir le jeu : la partie et les scores repartent de zéro', async ({ page }) => {
+  await partieAvecVictoire(page);
+  await page.reload();
+  await attendDepartAZero(page);
+});
+
+test("une ancienne sauvegarde (v2.2 à v2.4) est ignorée et effacée", async ({ page }) => {
+  await page.goto('puissance-4/');
+  await page.evaluate(() => localStorage.setItem('ludoaventura-p4-v1', JSON.stringify({ mode: 'duo', level: 'moyen',
+    board: [[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[1,2,0,0,0,0,0]],
+    current: 1, starter: 1, over: false, winner: 0, winCells: [], scores: { duo: { 1: 3, 2: 1 } } })));
+  await page.reload();
+  await attendDepartAZero(page);
+  expect(await page.evaluate(() => localStorage.getItem('ludoaventura-p4-v1'))).toBeNull();
+});
+
+test('le retour au menu pendant une partie permet de la reprendre (même page)', async ({ page }) => {
   await page.goto('puissance-4/');
   await page.getByRole('button', { name: 'Jouer à deux sur ce téléphone' }).click();
   await press(page, 2);
-  await press(page, 4);
-  await page.reload();
-  await expect(tokens(page)).toHaveCount(2);
   await page.getByRole('button', { name: 'Retour au choix du mode' }).click();
-  await expect(page.getByRole('button', { name: 'Reprendre la partie en cours' })).toBeVisible();
+  await page.getByRole('button', { name: 'Reprendre la partie en cours' }).click();
+  await expect(tokens(page)).toHaveCount(1);
 });
 
 test('clavier : flèches et Entrée pour jouer', async ({ page }) => {

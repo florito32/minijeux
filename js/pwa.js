@@ -3,6 +3,14 @@
 // (hors ligne…), la retente à la première interaction (clic, toucher, défilement, clavier).
 (function () {
   'use strict';
+
+  // Retour sur une page avec le bouton « précédent » : le navigateur peut la restaurer
+  // telle qu'on l'a quittée (cache de navigation). On la recharge pour que le jeu
+  // reparte toujours de zéro quand on revient d'un autre jeu.
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) location.reload();
+  });
+
   if (!('serviceWorker' in navigator)) return;
   // sw.js est à la racine du site, à côté du dossier js/ : on le localise depuis ce script
   // pour que l'enregistrement fonctionne depuis n'importe quelle page (accueil, aventures).
