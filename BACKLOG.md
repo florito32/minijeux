@@ -1,5 +1,7 @@
 # BACKLOG — ludoaventura
 
+> Depuis v2.0 (1er novembre 2026), Ludoaventura est un site de **petits jeux** avec une barre d'onglets. Les lignes 1–18 concernent l'ancienne version (éléphants, retirée).
+
 Statuts : à faire / en cours / fait à valider / terminé / question en attente
 
 | # | Instruction | Statut | Tests |
@@ -22,3 +24,8 @@ Statuts : à faire / en cours / fait à valider / terminé / question en attente
 | 16 | « Go » : reprendre tout le backlog en autonomie | terminé (v1.1 → v1.5 livrées) | ✅ |
 | 17 | Structurer le site : accueil Ludoaventura + page éléphants comme 1re aventure | fait à valider (v1.3, PR #6) — hypothèses à valider : adresse `/elephants/`, carte « Prochaine aventure » sur l'accueil, CSS commun `css/site.css` | ✅ 36/36 en local + CI |
 | 18 | Accélérer la CI (image officielle Playwright au lieu de l'installation de Chromium) | fait à valider | ✅ |
+| 19 | Changer de thème : supprimer tout le contenu sur les éléphants | fait à valider (v2.0 : page `/elephants/`, icône éléphant, styles et tests associés retirés ; l'historique des versions garde la mention des anciennes versions) | ✅ 52/52 en local + CI |
+| 20 | Garder des onglets pour créer des petits jeux | fait à valider (v2.0 : barre d'onglets en haut de chaque page, choix validé « barre d'onglets en haut » ; l'adresse racine ouvre directement le 1er onglet) | ✅ |
+| 21 | Commencer une page « jeu de multiplication » | fait à valider (v2.0, `/multiplication/`) — hypothèses à valider : tables de 1 à 10, questions au hasard, saisie au clavier numérique, score « bonnes réponses / total », correction affichée en cas d'erreur, nouvelle couleur bleue et nouvelle icône « × » | ✅ |
+| 22 | Attendre les nouvelles instructions de l'utilisateur pour le jeu de multiplication | question en attente | — |
+| 23 | Tâche planifiée de reprise pour cette session | terminé (nouvelle tâche toutes les 2 h ; l'ancienne, liée à la session précédente, est désactivée) | — |

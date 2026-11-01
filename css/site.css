@@ -1,123 +1,120 @@
-/* Styles communs à toutes les pages Ludoaventura. */
+/* Styles communs à toutes les pages Ludoaventura (petits jeux). */
 :root {
-  --bg: #f6f1e7;
-  --surface: #fffaf0;
-  --ink: #2b2620;
-  --muted: #6b6155;
-  --accent: #9a4e1a; /* contraste ≥ 4,5:1 (WCAG AA) sur tous les fonds clairs */
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --ink: #1d2433;
+  --muted: #586174;
+  --accent: #2f5bd3;        /* bleu principal : contraste ≥ 4,5:1 sur fond clair (WCAG AA) */
   --on-accent: #ffffff;
-  --accent-soft: #f0dcc6;
-  --green: #4f6b3a;
-  --green-soft: #dfe7d2;
-  --line: #e3d8c6;
+  --accent-soft: #e3eafb;
+  --good: #1f7a45;
+  --good-soft: #dff3e7;
+  --bad: #b3261e;
+  --bad-soft: #fbe3e1;
+  --line: #dde2ee;
   --radius: 18px;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #1c1a17;
-    --surface: #26231f;
-    --ink: #efe8dc;
-    --muted: #b3a896;
-    --accent: #e09257;
-    --on-accent: #1c1a17;
-    --accent-soft: #3d2c1e;
-    --green: #a8c48d;
-    --green-soft: #2a3324;
-    --line: #3a352e;
+    --bg: #12151c;
+    --surface: #1b2029;
+    --ink: #eef1f7;
+    --muted: #a6afc2;
+    --accent: #8fb0ff;
+    --on-accent: #12151c;
+    --accent-soft: #24304a;
+    --good: #7fd6a2;
+    --good-soft: #1d3327;
+    --bad: #ff9c94;
+    --bad-soft: #3c2220;
+    --line: #2c3340;
   }
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
 body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 17px/1.65 "Inter", system-ui, sans-serif;
+  font: 17px/1.6 "Inter", system-ui, sans-serif;
+  min-height: 100dvh;
+  display: flex; flex-direction: column;
 }
-h1, h2, h3 { font-family: "Fraunces", Georgia, serif; line-height: 1.15; margin: 0 0 .5em; }
+main { flex: 1; }
+h1, h2, h3 { line-height: 1.15; margin: 0 0 .5em; }
 a { color: var(--accent); }
 /* Focus clavier bien visible sur tous les éléments interactifs */
-:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
 /* Lien d'évitement : visible seulement au clavier */
 .skip-link {
   position: absolute; left: 16px; top: -100px; z-index: 100;
   background: var(--accent); color: var(--on-accent); padding: 10px 16px; border-radius: 8px; font-weight: 600;
 }
 .skip-link:focus { top: 12px; }
-.wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
 
-nav {
+/* ---------- Barre d'onglets des jeux (en haut de chaque page) ---------- */
+.tabs {
   position: sticky; top: 0; z-index: 10;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--line);
 }
-nav .wrap { display: flex; gap: 20px; align-items: center; height: 56px; overflow-x: auto; }
-nav strong { font-family: "Fraunces", serif; white-space: nowrap; }
-nav a.brand { font-family: "Fraunces", serif; font-weight: 600; color: var(--accent); }
-nav a.brand::after { content: " ›"; color: var(--muted); }
-nav a { color: var(--muted); text-decoration: none; font-size: 15px; white-space: nowrap; }
-nav a:hover { color: var(--ink); }
-
-header.hero { padding: 72px 0 56px; }
-.hero .wrap { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; }
-.eyebrow { color: var(--accent); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: 13px; }
-.hero h1 { font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 800; }
-.hero p { font-size: 1.15rem; color: var(--muted); max-width: 52ch; }
-.hero svg { width: 100%; height: auto; }
-
-section { padding: 56px 0; border-top: 1px solid var(--line); }
-section h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); }
-.lead { color: var(--muted); max-width: 65ch; margin-bottom: 32px; }
-
-.grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
-.card {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 24px;
+.tabs .wrap { display: flex; align-items: center; gap: 16px; min-height: 60px; }
+.tabs .brand { font-weight: 700; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.tabs ul {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
 }
-.card h3 { font-size: 1.3rem; }
-.card p { margin: 0; color: var(--muted); }
-.tag {
-  display: inline-block; font-size: 13px; font-weight: 600;
-  padding: 3px 10px; border-radius: 99px; margin-bottom: 12px;
-  background: var(--accent-soft); color: var(--accent);
+.tabs li { flex: none; }
+.tabs a.tab, .tabs .tab-soon {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px;
+  padding: 8px 16px; border-radius: 99px; font-weight: 600; font-size: 15px;
+  text-decoration: none; white-space: nowrap;
 }
-.tag.green { background: var(--green-soft); color: var(--green); }
-.status { font-size: 14px; margin-top: 12px !important; }
+.tabs a.tab { color: var(--muted); }
+.tabs a.tab:hover { color: var(--ink); background: var(--accent-soft); }
+.tabs a.tab[aria-current="page"] { background: var(--accent); color: var(--on-accent); }
+.tabs .tab-soon { color: var(--muted); border: 1px dashed var(--line); }
+@media (max-width: 420px) { .tabs .brand { display: none; } }
 
-.stats { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-top: 8px; }
-.stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
-.stat b { display: block; font-family: "Fraunces", serif; font-size: 2rem; color: var(--accent); }
-.stat span { color: var(--muted); font-size: 15px; }
+/* ---------- En-tête de page ---------- */
+.page-head { padding: 32px 0 8px; }
+.page-head h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 800; }
+.page-head p { color: var(--muted); margin: 0; max-width: 60ch; }
 
-.food-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-.food-list li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; }
-.food-list .emoji { font-size: 1.8rem; display: block; margin-bottom: 6px; }
-.food-list strong { display: block; margin-bottom: 4px; }
-.food-list p { margin: 0; color: var(--muted); font-size: 15px; }
-
-.day { position: relative; margin: 24px 0 0; padding-left: 28px; border-left: 3px solid var(--accent-soft); }
-.day div { margin-bottom: 20px; position: relative; }
-.day div::before {
-  content: ""; position: absolute; left: -36px; top: 7px;
-  width: 13px; height: 13px; border-radius: 50%; background: var(--accent);
+/* ---------- Jeu de multiplication ---------- */
+.game {
+  margin: 24px auto 48px; max-width: 520px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: clamp(20px, 5vw, 36px); text-align: center;
 }
-.day b { color: var(--accent); }
-
-.callout {
-  background: var(--green-soft); color: var(--ink);
-  border-radius: var(--radius); padding: 24px 28px; margin-top: 32px;
+.score { display: flex; justify-content: center; gap: 12px; margin: 0 0 20px; color: var(--muted); font-weight: 600; }
+.score b { color: var(--ink); }
+.question {
+  font-size: clamp(2.6rem, 13vw, 4.5rem); font-weight: 800; line-height: 1;
+  margin: 0 0 24px; font-variant-numeric: tabular-nums;
 }
-.callout h3 { color: var(--green); font-size: 1.25rem; }
-.callout p { margin: 0; }
+.answer-form { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.answer-form input {
+  width: 7ch; min-height: 56px; font: 700 1.8rem/1 "Inter", system-ui, sans-serif; text-align: center;
+  color: var(--ink); background: var(--bg); border: 2px solid var(--line); border-radius: 14px;
+}
+.answer-form input:focus-visible { border-color: var(--accent); outline-offset: 2px; }
+.btn {
+  min-height: 56px; padding: 0 24px; border-radius: 14px; border: 0; cursor: pointer;
+  font: 700 1.05rem "Inter", system-ui, sans-serif;
+}
+.btn-primary { background: var(--accent); color: var(--on-accent); }
+.btn-primary:hover { filter: brightness(1.08); }
+.feedback { min-height: 3.2em; margin: 20px 0 0; font-weight: 600; border-radius: 12px; padding: 10px; }
+.feedback:empty { padding: 0; }
+.feedback.good { background: var(--good-soft); color: var(--good); }
+.feedback.bad { background: var(--bad-soft); color: var(--bad); }
 
-footer { padding: 40px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
-footer p { margin: 0; max-width: 70ch; }
+/* ---------- Pied de page + badge de version (js/version.js) ---------- */
+footer { padding: 24px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+footer p { margin: 0; }
 footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; }
-
-/* Badge de version (js/version.js) et fenêtre d'historique */
 .version-badge {
   font: 600 13px/1 "Inter", system-ui, sans-serif; color: var(--muted);
   background: var(--surface); border: 1px solid var(--line); border-radius: 99px;
@@ -141,36 +138,12 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: cent
   border: 0; border-radius: 99px; padding: 10px 20px; min-height: 44px; cursor: pointer;
 }
 
-@media (max-width: 760px) {
-  .hero .wrap { grid-template-columns: 1fr; }
-  header.hero { padding: 40px 0 32px; }
-  .hero svg { max-width: 320px; margin: 0 auto; }
-}
-
-/* Accueil Ludoaventura : liste des aventures */
-.adventures { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
-.adventure {
-  display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: inherit;
-  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 24px; transition: border-color .15s, transform .15s;
-}
-a.adventure:hover, a.adventure:focus-visible { border-color: var(--accent); transform: translateY(-2px); }
-.adventure .emoji { font-size: 2.6rem; line-height: 1; }
-.adventure .tag { align-self: flex-start; margin: 4px 0 0; }
-.adventure h3 { font-size: 1.4rem; margin: 4px 0 0; }
-.adventure p { margin: 0; color: var(--muted); }
-.adventure .cta { margin-top: auto; padding-top: 8px; font-weight: 600; color: var(--accent); }
-.adventure.soon { border-style: dashed; background: transparent; }
-.adventure.soon .cta { color: var(--muted); }
-
 /* Texte lu par les lecteurs d'écran mais invisible à l'écran */
 .visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* Renvois vers les sources et liste des sources */
-.ref { font-size: .8em; text-decoration: none; vertical-align: super; line-height: 0; white-space: nowrap; }
-.sources { margin: 0; padding-left: 24px; color: var(--muted); font-size: 15px; display: grid; gap: 8px; }
-.sources li { overflow-wrap: anywhere; }
-.sources li:target { color: var(--ink); background: var(--accent-soft); border-radius: 6px; }
-
-/* Les ancres ne passent pas sous le menu collant */
-[id] { scroll-margin-top: 72px; }
+/* Petits écrans carrés / peu hauts : on resserre */
+@media (max-height: 560px) {
+  .page-head { padding-top: 16px; }
+  .game { margin-top: 12px; }
+  .question { margin-bottom: 16px; }
+}

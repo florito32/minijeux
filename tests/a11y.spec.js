@@ -4,7 +4,7 @@ const { test, expect } = require('@playwright/test');
 const AxeBuilder = require('@axe-core/playwright').default;
 
 for (const scheme of ['light', 'dark']) {
-  for (const path of ['./', 'elephants/']) {
+  for (const path of ['multiplication/']) {
     test(`aucune violation WCAG A/AA (${scheme}) : ${path}`, async ({ page }) => {
       await page.emulateMedia({ colorScheme: scheme });
       await page.goto(path);
@@ -19,7 +19,7 @@ for (const scheme of ['light', 'dark']) {
 
 test('le lien « Aller au contenu » est le premier arrêt clavier', async ({ page, browserName }) => {
   test.skip(test.info().project.name !== 'ordinateur', 'navigation clavier testée sur ordinateur');
-  await page.goto('elephants/');
+  await page.goto('multiplication/');
   await page.keyboard.press('Tab');
   await expect(page.getByRole('link', { name: 'Aller au contenu' })).toBeFocused();
 });

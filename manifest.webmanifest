@@ -1,13 +1,13 @@
 {
   "name": "Ludoaventura",
   "short_name": "Ludoaventura",
-  "description": "Aventures ludiques et documentaires — 1re aventure : le monde des éléphants.",
+  "description": "Petits jeux pour apprendre en s'amusant — 1er jeu : les tables de multiplication.",
   "lang": "fr",
-  "start_url": "./",
+  "start_url": "./multiplication/",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f6f1e7",
-  "theme_color": "#9a4e1a",
+  "background_color": "#f4f6fb",
+  "theme_color": "#2f5bd3",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },

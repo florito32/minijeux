@@ -3,75 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ludoaventura — aventures ludiques et documentaires</title>
-  <meta name="description" content="Ludoaventura : des aventures ludiques et documentaires pour découvrir le monde. Première aventure : le monde des éléphants.">
-  <link rel="canonical" href="https://florito32.github.io/ludoaventura/">
-  <!-- Aperçus de partage (réseaux sociaux, messageries) -->
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Ludoaventura">
-  <meta property="og:locale" content="fr_FR">
-  <meta property="og:title" content="Ludoaventura — aventures ludiques et documentaires">
-  <meta property="og:description" content="Des aventures ludiques et documentaires pour découvrir le monde. Première aventure : le monde des éléphants.">
-  <meta property="og:url" content="https://florito32.github.io/ludoaventura/">
-  <meta property="og:image" content="https://florito32.github.io/ludoaventura/icons/icon-512.png">
-  <meta name="twitter:card" content="summary">
-  <!-- PWA : installable sur iPhone et Android -->
+  <title>Ludoaventura — petits jeux pour apprendre</title>
+  <meta name="description" content="Ludoaventura : petits jeux gratuits pour apprendre en s'amusant. Premier jeu : les tables de multiplication.">
+  <!-- L'accueil ouvre directement le premier onglet (jeu de multiplication). -->
+  <link rel="canonical" href="https://florito32.github.io/ludoaventura/multiplication/">
+  <meta http-equiv="refresh" content="0; url=multiplication/">
+  <script>location.replace('multiplication/' + location.search + location.hash);</script>
   <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#9a4e1a">
+  <meta name="theme-color" content="#2f5bd3">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-title" content="Ludoaventura">
   <meta name="mobile-web-app-capable" content="yes">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/site.css">
 </head>
 <body>
-<a class="skip-link" href="#contenu">Aller au contenu</a>
-
-<header class="hero">
-  <div class="wrap">
-    <div>
-      <div class="eyebrow">Apprendre en s'amusant</div>
-      <h1>Ludoaventura</h1>
-      <p>Des aventures ludiques et documentaires pour découvrir le monde, une thématique à la fois.</p>
-    </div>
-  </div>
-</header>
-
-<main id="contenu">
-  <section id="aventures" aria-labelledby="aventures-titre">
-    <div class="wrap">
-      <h2 id="aventures-titre">Les aventures</h2>
-      <div class="adventures">
-        <!-- Ajouter ici une carte par nouvelle aventure (dossier à la racine du site). -->
-        <a class="adventure" href="elephants/">
-          <span class="emoji" aria-hidden="true">🐘</span>
-          <span class="tag">Aventure n° 1</span>
-          <h3>Le monde des éléphants</h3>
-          <p>Espèces, alimentation, journée type et protection des plus grands animaux terrestres.</p>
-          <span class="cta">Partir à l'aventure →</span>
-        </a>
-        <div class="adventure soon">
-          <span class="emoji" aria-hidden="true">🧭</span>
-          <h3>Prochaine aventure</h3>
-          <p>Une nouvelle thématique arrive bientôt.</p>
-          <span class="cta">Bientôt disponible</span>
-        </div>
-      </div>
-    </div>
-  </section>
+<main class="wrap">
+  <h1>Ludoaventura</h1>
+  <p><a href="multiplication/">Ouvrir le jeu de multiplication</a></p>
 </main>
-
-<footer>
-  <div class="wrap">
-    <p>Ludoaventura — aventures ludiques et documentaires.</p>
-    <div data-version></div>
-  </div>
-</footer>
-
-<script src="js/version.js" defer></script>
-<script src="js/pwa.js" defer></script>
 </body>
 </html>
