@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Jeu de multiplication — Ludoaventura</title>
-  <meta name="description" content="Petit jeu gratuit pour s'entraîner aux tables de multiplication, sur téléphone, tablette et ordinateur.">
+  <title>Aventure des multiplications — Ludoaventura</title>
+  <meta name="description" content="Jeu de plateforme gratuit pour réviser les tables de multiplication : cours, saute et casse les bonnes caisses. Sur téléphone, tablette et ordinateur.">
   <link rel="canonical" href="https://florito32.github.io/ludoaventura/multiplication/">
   <!-- Aperçus de partage (réseaux sociaux, messageries) -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Ludoaventura">
   <meta property="og:locale" content="fr_FR">
-  <meta property="og:title" content="Jeu de multiplication — Ludoaventura">
-  <meta property="og:description" content="Petit jeu gratuit pour s'entraîner aux tables de multiplication.">
+  <meta property="og:title" content="Aventure des multiplications — Ludoaventura">
+  <meta property="og:description" content="Jeu de plateforme pour réviser les tables de multiplication.">
   <meta property="og:url" content="https://florito32.github.io/ludoaventura/multiplication/">
   <meta property="og:image" content="https://florito32.github.io/ludoaventura/icons/icon-512.png">
   <meta name="twitter:card" content="summary">
@@ -44,22 +44,44 @@
 <main id="contenu">
   <div class="wrap">
     <header class="page-head">
-      <h1>Jeu de multiplication</h1>
-      <p>Trouve le résultat, puis valide. Les tables de 1 à 10.</p>
+      <h1>Aventure des multiplications</h1>
+      <p>Cours, saute et casse par en dessous les caisses dont la multiplication donne le nombre à trouver.</p>
     </header>
 
-    <section class="game" aria-label="Partie en cours">
-      <p class="score" aria-live="polite">
-        Bonnes réponses : <b data-score>0</b> / <b data-total>0</b>
-      </p>
-      <p class="question" data-question aria-live="polite"></p>
-      <form class="answer-form" data-form novalidate>
-        <label class="visually-hidden" for="reponse">Ta réponse</label>
-        <input id="reponse" name="reponse" type="text" inputmode="numeric" pattern="[0-9]*"
-               autocomplete="off" maxlength="3" required>
-        <button class="btn btn-primary" type="submit">Valider</button>
-      </form>
-      <p class="feedback" data-feedback role="status"></p>
+    <section class="game" aria-label="Jeu">
+      <!-- Infos de partie : vies, niveau, caisses trouvées -->
+      <div class="hud">
+        <span class="hearts" data-hearts role="img" aria-label="Vies : 3 sur 3">❤️❤️❤️</span>
+        <span>Niveau <b data-level>1</b></span>
+        <span>Caisses : <b data-found>0</b> / <b data-needed>4</b></span>
+      </div>
+
+      <div class="stage">
+        <canvas data-canvas width="400" height="240" tabindex="0" role="img"
+                aria-label="Le niveau : un petit personnage court et saute sous des caisses marquées d'une multiplication.">
+          Ce jeu a besoin d'un navigateur récent.
+        </canvas>
+        <!-- Écran de début / fin de niveau -->
+        <div class="overlay" data-overlay>
+          <h2 data-overlay-title>Niveau 1</h2>
+          <p data-overlay-text>Casse les caisses dont le résultat fait le nombre écrit en bas, puis rejoins le drapeau.</p>
+          <button class="btn btn-primary" type="button" data-start>Jouer</button>
+        </div>
+      </div>
+
+      <!-- Le nombre à trouver, en bas de l'écran de jeu -->
+      <p class="target">Nombre à trouver : <strong data-target>24</strong></p>
+
+      <!-- Commandes tactiles (téléphones et tablettes) -->
+      <div class="pad">
+        <div class="pad-move">
+          <button type="button" class="pad-btn" data-pad="left" aria-label="Aller à gauche">◀</button>
+          <button type="button" class="pad-btn" data-pad="right" aria-label="Aller à droite">▶</button>
+        </div>
+        <button type="button" class="pad-btn pad-jump" data-pad="jump">Sauter</button>
+      </div>
+      <p class="keys">Clavier : <kbd>←</kbd> <kbd>→</kbd> pour courir, <kbd>Espace</kbd> ou <kbd>↑</kbd> pour sauter.</p>
+      <p class="visually-hidden" data-live aria-live="polite"></p>
     </section>
   </div>
 </main>

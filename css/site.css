@@ -82,34 +82,60 @@ a { color: var(--accent); }
 .page-head h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 800; }
 .page-head p { color: var(--muted); margin: 0; max-width: 60ch; }
 
-/* ---------- Jeu de multiplication ---------- */
-.game {
-  margin: 24px auto 48px; max-width: 520px;
-  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: clamp(20px, 5vw, 36px); text-align: center;
+/* ---------- Jeu de plateforme (multiplication) ---------- */
+.game { margin: 16px auto 32px; max-width: 900px; }
+.hud {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 16px;
+  margin-bottom: 8px; font-weight: 600; color: var(--muted);
 }
-.score { display: flex; justify-content: center; gap: 12px; margin: 0 0 20px; color: var(--muted); font-weight: 600; }
-.score b { color: var(--ink); }
-.question {
-  font-size: clamp(2.6rem, 13vw, 4.5rem); font-weight: 800; line-height: 1;
-  margin: 0 0 24px; font-variant-numeric: tabular-nums;
+.hud b { color: var(--ink); }
+.hearts { font-size: 1.15rem; letter-spacing: 2px; }
+/* L'écran de jeu garde ses proportions (5:3) et tient dans la hauteur de l'écran avec les commandes. */
+.stage {
+  position: relative; margin: 0 auto;
+  width: min(100%, calc((100dvh - 400px) * 5 / 3)); min-width: min(100%, 280px);
+  aspect-ratio: 5 / 3; border-radius: var(--radius); overflow: hidden;
+  border: 1px solid var(--line); background: #6ec3ff;
 }
-.answer-form { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-.answer-form input {
-  width: 7ch; min-height: 56px; font: 700 1.8rem/1 "Inter", system-ui, sans-serif; text-align: center;
-  color: var(--ink); background: var(--bg); border: 2px solid var(--line); border-radius: 14px;
+.stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.stage canvas:focus-visible { outline: none; }
+.stage:focus-within { border-color: var(--accent); }   /* repère discret quand le jeu a le focus clavier */
+.overlay {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; padding: 16px; text-align: center; color: #fff; background: rgb(17 24 39 / .62);
 }
-.answer-form input:focus-visible { border-color: var(--accent); outline-offset: 2px; }
+.overlay[hidden] { display: none; }
+.overlay h2 { font-size: clamp(1.3rem, 5vw, 2rem); margin: 0; }
+.overlay p { margin: 0 0 6px; max-width: 40ch; }
+.overlay .btn { background: #fff; color: #1d2433; }
+.target {
+  margin: 10px 0 0; text-align: center; font-weight: 700; font-size: 1.1rem; color: var(--muted);
+}
+.target strong {
+  display: inline-block; min-width: 2.4em; margin-left: 6px; padding: 2px 14px; border-radius: 12px;
+  font-size: 1.9rem; color: var(--on-accent); background: var(--accent); vertical-align: middle;
+}
 .btn {
-  min-height: 56px; padding: 0 24px; border-radius: 14px; border: 0; cursor: pointer;
+  min-height: 52px; padding: 0 28px; border-radius: 14px; border: 0; cursor: pointer;
   font: 700 1.05rem "Inter", system-ui, sans-serif;
 }
 .btn-primary { background: var(--accent); color: var(--on-accent); }
-.btn-primary:hover { filter: brightness(1.08); }
-.feedback { min-height: 3.2em; margin: 20px 0 0; font-weight: 600; border-radius: 12px; padding: 10px; }
-.feedback:empty { padding: 0; }
-.feedback.good { background: var(--good-soft); color: var(--good); }
-.feedback.bad { background: var(--bad-soft); color: var(--bad); }
+/* Commandes tactiles : visibles sur écrans tactiles et petits écrans */
+.pad { display: none; justify-content: space-between; align-items: center; gap: 12px; margin-top: 10px; user-select: none; -webkit-user-select: none; }
+.pad-move { display: flex; gap: 10px; }
+.pad-btn {
+  min-width: 64px; min-height: 60px; border-radius: 16px; border: 2px solid var(--line);
+  background: var(--surface); color: var(--ink); font: 700 1.3rem "Inter", system-ui, sans-serif;
+  touch-action: none; -webkit-touch-callout: none; cursor: pointer;
+}
+.pad-jump { min-width: 120px; font-size: 1.05rem; background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.pad-btn.is-down { transform: scale(.94); filter: brightness(.9); }
+.keys { margin: 10px 0 0; text-align: center; color: var(--muted); font-size: 14px; }
+kbd { font: 600 13px "Inter", system-ui, sans-serif; padding: 1px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+@media (pointer: coarse), (max-width: 760px) {
+  .pad { display: flex; }
+  .keys { display: none; }
+}
 
 /* ---------- Pied de page + badge de version (js/version.js) ---------- */
 footer { padding: 24px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
@@ -142,8 +168,15 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: cent
 .visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* Petits écrans carrés / peu hauts : on resserre */
-@media (max-height: 560px) {
-  .page-head { padding-top: 16px; }
-  .game { margin-top: 12px; }
-  .question { margin-bottom: 16px; }
+@media (max-height: 640px) {
+  .page-head { padding: 12px 0 0; }
+  .page-head p { display: none; }
+  .page-head h1 { font-size: 1.4rem; margin: 0; }
+  .game { margin-top: 8px; }
+  .stage { width: min(100%, calc((100dvh - 290px) * 5 / 3)); }
+  .hud { margin-bottom: 4px; }
+  .target { margin-top: 6px; }
+  .target strong { font-size: 1.5rem; }
+  .pad { margin-top: 6px; }
+  .pad-btn { min-height: 52px; }
 }

@@ -4,9 +4,15 @@
 (function () {
   'use strict';
 
-  var VERSION = '2.0';
+  var VERSION = '2.1';
 
   var HISTORY = [
+    { v: '2.1', date: '2026-11-01', changes: [
+      'Le jeu de multiplication devient une aventure 2D : un personnage court et saute.',
+      'On casse par en dessous les caisses dont la multiplication donne le nombre affiché en bas (1 caisse sur 3).',
+      'Niveau 1 : 3 cœurs, mauvaise caisse ou chute = un cœur en moins ; drapeau de fin ouvert quand toutes les bonnes caisses sont trouvées.',
+      'Commandes au clavier et boutons tactiles sur téléphone et tablette.'
+    ] },
     { v: '2.0', date: '2026-11-01', changes: [
       'Ludoaventura devient un site de petits jeux : tout le contenu sur les éléphants est retiré.',
       'Nouvelle barre d\u2019onglets en haut de page, un onglet par jeu.',
