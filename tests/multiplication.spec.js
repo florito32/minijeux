@@ -146,7 +146,7 @@ test('chaque partie lancée change le nombre à trouver', async ({ page }) => {
   }
 });
 
-for (const chemin of ['multiplication/', 'multiplication/aventure/', 'puissance-4/']) test(`QR code « Sur téléphone » sur ordinateur : ${chemin} @smoke`, async ({ page }) => {
+for (const chemin of ['multiplication/', 'multiplication/aventure/', 'multiplication/etoiles/', 'puissance-4/']) test(`QR code « Sur téléphone » sur ordinateur : ${chemin} @smoke`, async ({ page }) => {
   test.skip(test.info().project.name !== 'ordinateur', 'bouton affiché seulement sur ordinateur');
   await page.goto(chemin);
   await page.getByRole('button', { name: /Sur téléphone/ }).click();

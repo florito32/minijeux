@@ -4,9 +4,14 @@
 (function () {
   'use strict';
 
-  var VERSION = '2.8';
+  var VERSION = '2.9';
 
   var HISTORY = [
+    { v: '2.9', date: '2026-11-02', changes: [
+      'Nouveau jeu de multiplication : « Course aux étoiles ».',
+      'Choisis tes tables, puis trouve la bonne réponse parmi trois ; étoile de bronze à 10, d\u2019argent à 25, d\u2019or à 50.',
+      'Chronomètre arrêté à la 50e bonne réponse, nom du joueur et 10 meilleurs temps pour chaque nombre de tables (gardés sur l\u2019appareil).'
+    ] },
     { v: '2.8', date: '2026-11-01', changes: [
       'Le site s\u2019appelle désormais « Minijeux » (nouvelle adresse : florito32.github.io/minijeux).',
       'QR code mis à jour vers la nouvelle adresse.'
