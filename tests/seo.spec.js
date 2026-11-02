@@ -1,7 +1,7 @@
 // Référencement : balises essentielles présentes et cohérentes sur chaque page.
 const { test, expect } = require('@playwright/test');
 
-for (const path of ['multiplication/', 'multiplication/aventure/']) {
+for (const path of ['multiplication/', 'multiplication/aventure/', 'multiplication/etoiles/']) {
   test(`balises SEO présentes : ${path} @smoke`, async ({ page }) => {
     await page.goto(path);
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr');

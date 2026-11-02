@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Course aux étoiles — Minijeux</title>
+  <meta name="description" content="Jeu gratuit et chronométré pour réviser les tables de multiplication : choisis la bonne réponse parmi trois, gagne des étoiles et bats ton record.">
+  <link rel="canonical" href="https://florito32.github.io/minijeux/multiplication/etoiles/">
+  <!-- Aperçus de partage (réseaux sociaux, messageries) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Minijeux">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:title" content="Course aux étoiles — Minijeux">
+  <meta property="og:description" content="Choisis la bonne réponse, gagne des étoiles et bats ton record.">
+  <meta property="og:url" content="https://florito32.github.io/minijeux/multiplication/etoiles/">
+  <meta property="og:image" content="https://florito32.github.io/minijeux/icons/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <!-- PWA : installable sur iPhone et Android -->
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <meta name="theme-color" content="#2f5bd3">
+  <link rel="icon" href="../../icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="Minijeux">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/site.css">
+  <link rel="stylesheet" href="../../css/etoiles.css">
+</head>
+<body>
+<a class="skip-link" href="#contenu">Aller au contenu</a>
+
+<!-- Barre d'onglets : un onglet par jeu (ajouter un <li> par nouveau jeu, sur chaque page) -->
+<nav class="tabs" aria-label="Jeux">
+  <div class="wrap">
+    <a class="brand" href="../../">Minijeux</a>
+    <ul>
+      <li><a class="tab" href="../../multiplication/" aria-current="true"><span aria-hidden="true">✖️</span> Multiplication</a></li>
+      <li><a class="tab" href="../../puissance-4/"><span aria-hidden="true">🔴</span> Puissance 4</a></li>
+    </ul>
+    <!-- QR code : ouvrir le site sur un téléphone (bouton masqué sur les téléphones) -->
+    <button type="button" class="qr-btn" data-qr-open aria-haspopup="dialog"><span aria-hidden="true">📱</span> Sur téléphone</button>
+  </div>
+</nav>
+
+<main id="contenu">
+  <div class="wrap">
+    <header class="page-head">
+      <a class="back-link" href="../">← Jeux de multiplication</a>
+      <h1>Course aux étoiles</h1>
+      <p>Trouve 50 bonnes réponses le plus vite possible : bronze à 10, argent à 25, or à 50.</p>
+    </header>
+
+    <!-- 1. Choix des tables -->
+    <section class="et-card" data-screen="choix" aria-labelledby="et-choix-titre">
+      <h2 id="et-choix-titre">Choisis tes tables</h2>
+      <div class="et-tables" role="group" aria-label="Tables de multiplication">
+        <div class="et-chips">
+            <button type="button" class="et-chip" data-table="1" aria-pressed="false">1</button>
+            <button type="button" class="et-chip" data-table="2" aria-pressed="false">2</button>
+            <button type="button" class="et-chip" data-table="3" aria-pressed="false">3</button>
+            <button type="button" class="et-chip" data-table="4" aria-pressed="false">4</button>
+            <button type="button" class="et-chip" data-table="5" aria-pressed="false">5</button>
+            <button type="button" class="et-chip" data-table="6" aria-pressed="false">6</button>
+            <button type="button" class="et-chip" data-table="7" aria-pressed="false">7</button>
+            <button type="button" class="et-chip" data-table="8" aria-pressed="false">8</button>
+            <button type="button" class="et-chip" data-table="9" aria-pressed="false">9</button>
+            <button type="button" class="et-chip" data-table="10" aria-pressed="false">10</button>
+        </div>
+        <button type="button" class="link-btn et-all" data-all>Toutes</button>
+      </div>
+      <p class="et-hint" data-hint role="status">Touche une ou plusieurs tables.</p>
+      <button type="button" class="btn btn-primary et-start" data-start disabled>Démarrer</button>
+
+      <!-- Consulter les classements (un par nombre de tables) -->
+      <details class="et-records">
+        <summary>Voir les meilleurs temps</summary>
+        <label class="et-select">Classement :
+          <select data-board-select>
+            <option value="1">1 table</option><option value="2">2 tables</option><option value="3">3 tables</option>
+            <option value="4">4 tables</option><option value="5">5 tables</option><option value="6">6 tables</option>
+            <option value="7">7 tables</option><option value="8">8 tables</option><option value="9">9 tables</option>
+            <option value="10">10 tables</option>
+          </select>
+        </label>
+        <div data-board-preview></div>
+      </details>
+    </section>
+
+    <!-- 2. Partie en cours -->
+    <section class="et-card et-play" data-screen="jeu" aria-label="Partie en cours" hidden>
+      <div class="et-status">
+        <p class="et-count">Bonnes réponses : <strong data-score>0</strong> / 50</p>
+        <p class="et-timer" aria-label="Chronomètre"><span aria-hidden="true">⏱</span> <time data-timer>0:00.0</time></p>
+      </div>
+      <!-- Étoiles gagnées : bronze (10), argent (25), or (50) -->
+      <ul class="et-stars" aria-label="Étoiles">
+        <li class="et-star et-bronze" data-star="10"><span class="et-star-icon" aria-hidden="true">★</span><span class="et-star-label">10</span><span class="visually-hidden" data-star-text>Étoile de bronze : pas encore</span></li>
+        <li class="et-star et-silver" data-star="25"><span class="et-star-icon" aria-hidden="true">★</span><span class="et-star-label">25</span><span class="visually-hidden" data-star-text>Étoile d'argent : pas encore</span></li>
+        <li class="et-star et-gold" data-star="50"><span class="et-star-icon" aria-hidden="true">★</span><span class="et-star-label">50</span><span class="visually-hidden" data-star-text>Étoile d'or : pas encore</span></li>
+      </ul>
+      <div class="et-progress" aria-hidden="true"><span data-progress></span></div>
+
+      <!-- La multiplication, puis les 3 réponses à droite du « = », les unes sous les autres -->
+      <div class="et-question">
+        <p class="et-calc" data-calc aria-live="polite"></p>
+        <span class="et-eq" aria-hidden="true">=</span>
+        <div class="et-choices" role="group" aria-label="Réponses possibles" data-choices></div>
+      </div>
+      <p class="et-feedback" data-feedback role="status"></p>
+      <button type="button" class="link-btn et-quit" data-quit>Arrêter la partie</button>
+    </section>
+
+    <!-- 3. Fin de partie : nom + classement -->
+    <section class="et-card" data-screen="fin" aria-labelledby="et-fin-titre" hidden>
+      <h2 id="et-fin-titre">Bravo, 3 étoiles ! 🥇</h2>
+      <p class="et-final">Ton temps : <strong data-final-time></strong> <span class="et-sub" data-final-tables></span></p>
+      <form class="et-name" data-name-form>
+        <label for="et-nom">Ton nom pour le classement</label>
+        <div class="et-name-row">
+          <input id="et-nom" name="nom" type="text" maxlength="20" autocomplete="nickname" required>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>
+      <p class="et-saved" data-saved role="status"></p>
+      <h3 data-board-title>Les 10 meilleurs temps</h3>
+      <div data-board></div>
+      <button type="button" class="btn btn-primary" data-again>Rejouer</button>
+    </section>
+  </div>
+</main>
+
+<dialog class="qr-dialog" data-qr-dialog aria-labelledby="qr-titre">
+  <h2 id="qr-titre">Jouer sur un téléphone</h2>
+  <p>Scanne ce QR code avec l'appareil photo du téléphone.</p>
+  <img src="../../icons/qr-site.svg" width="240" height="240" alt="QR code qui ouvre https://florito32.github.io/minijeux/">
+  <p class="qr-url">florito32.github.io/minijeux</p>
+  <form method="dialog"><button class="version-close">Fermer</button></form>
+</dialog>
+
+<footer>
+  <div class="wrap">
+    <p>Minijeux — petits jeux pour apprendre en s'amusant.</p>
+    <div data-version></div>
+  </div>
+</footer>
+
+<script src="../../js/etoiles.js" defer></script>
+<script src="../../js/qr.js" defer></script>
+<script src="../../js/version.js" defer></script>
+<script src="../../js/pwa.js" defer></script>
+</body>
+</html>
