@@ -4,9 +4,14 @@
 (function () {
   'use strict';
 
-  var VERSION = '2.9';
+  var VERSION = '2.10';
 
   var HISTORY = [
+    { v: '2.10', date: '2026-11-03', changes: [
+      'Course aux étoiles : 3 vies (cœurs) ; chaque mauvaise réponse en coûte une.',
+      'Une vie regagnée aux paliers 10 et 25, sans jamais dépasser 3.',
+      'À 0 vie, la partie est perdue : score et étoiles obtenues affichés, sans classement.'
+    ] },
     { v: '2.9', date: '2026-11-02', changes: [
       'Nouveau jeu de multiplication : « Course aux étoiles ».',
       'Choisis tes tables, puis trouve la bonne réponse parmi trois ; étoile de bronze à 10, d\u2019argent à 25, d\u2019or à 50.',

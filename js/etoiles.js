@@ -2,6 +2,8 @@
 // 1) Le joueur choisit ses tables (1 à 10) puis démarre.
 // 2) Une multiplication + 3 réponses : une bonne réponse ajoute 1 au compteur, une mauvaise ne change rien.
 // 3) Étoiles : bronze à 10, argent à 25, or à 50. Le chronomètre s'arrête à la 50e bonne réponse.
+// 3 bis) Vies : 3 au départ, une mauvaise réponse en retire une ; +1 vie aux paliers 10 et 25 (jamais plus de 3).
+//        À 0 vie, la partie est perdue : score et étoiles affichés, pas de classement.
 // 4) Le joueur inscrit son nom : 10 meilleurs temps gardés sur l'appareil, un classement par nombre de tables.
 (function () {
   'use strict';
@@ -12,6 +14,8 @@
     { at: 25, name: 'argent', label: 'Étoile d’argent' },
     { at: 50, name: 'or', label: 'Étoile d’or' }
   ];
+  var MAX_LIVES = 3;
+  var LIFE_AT = [10, 25];           // paliers qui rendent une vie (si le joueur en a moins de 3)
   var TOP = 10;
   var BOARD_KEY = 'minijeux-etoiles-classements-v1';
   var TABLES_KEY = 'minijeux-etoiles-tables-v1';
@@ -29,6 +33,9 @@
   var nameForm = $('[data-name-form]'), nameInput = $('#et-nom'), savedEl = $('[data-saved]');
   var boardEl = $('[data-board]'), boardTitle = $('[data-board-title]');
   var boardSelect = $('[data-board-select]'), boardPreview = $('[data-board-preview]');
+  var heartEls = Array.prototype.slice.call(document.querySelectorAll('[data-heart]'));
+  var livesText = $('[data-lives-text]'), finTitle = $('[data-fin-title]');
+  var lostSummary = $('[data-lost-summary]'), wonOnly = $('[data-won-only]');
 
   /* ---------- Stockage (protégé : navigation privée, stockage bloqué…) ---------- */
   function load(key, fallback) {
@@ -41,7 +48,7 @@
 
   /* ---------- État ---------- */
   var tables = load(TABLES_KEY, []).filter(function (n) { return n >= 1 && n <= 10; });
-  var score = 0, question = null, locked = false;
+  var score = 0, lives = MAX_LIVES, question = null, locked = false;
   var startTime = 0, elapsed = 0, timerId = 0, running = false;
   var lastEntry = null;             // dernière performance enregistrée (pour la surligner)
 
@@ -129,6 +136,11 @@
       btn.classList.add('is-good');
       feedbackEl.textContent = '';
       updateScore(true);
+      if (LIFE_AT.indexOf(score) >= 0 && lives < MAX_LIVES) {
+        lives++;
+        renderLives('gain');
+        feedbackEl.textContent = (feedbackEl.textContent ? feedbackEl.textContent + ' ' : '') + '+1 vie ♥';
+      }
       if (score >= GOAL) { setTimeout(finish, 600); return; }
       setTimeout(newQuestion, 250);
     } else {
@@ -138,6 +150,10 @@
         if (Number(b.textContent) === question.good) b.classList.add('is-good');
       });
       feedbackEl.textContent = 'Non : ' + question.a + ' × ' + question.b + ' = ' + question.good;
+      // Une erreur coûte une vie ; à 0 vie, la partie est perdue (après la correction).
+      lives--;
+      renderLives('loss');
+      if (lives <= 0) { stopTimer(); setTimeout(lose, WRONG_DELAY); return; }
       setTimeout(function () { feedbackEl.textContent = ''; newQuestion(); }, WRONG_DELAY);
     }
   }
@@ -158,6 +174,22 @@
     });
   }
 
+  /* ---------- Vies (cœurs) ---------- */
+  // effect : 'gain' ou 'loss' pour animer le cœur concerné, rien au démarrage.
+  function renderLives(effect) {
+    heartEls.forEach(function (h, i) {
+      var alive = i < lives;
+      h.classList.toggle('is-lost', !alive);
+      var changed = effect === 'gain' ? i === lives - 1 : effect === 'loss' ? i === lives : false;
+      if (changed) {
+        var cls = effect === 'gain' ? 'is-gain' : 'is-hit';
+        h.classList.remove(cls); void h.offsetWidth; h.classList.add(cls);   // relance l'animation
+        setTimeout(function () { h.classList.remove(cls); }, 700);
+      }
+    });
+    livesText.textContent = lives + (lives > 1 ? ' vies' : ' vie') + ' sur ' + MAX_LIVES;
+  }
+
   /* ---------- Chronomètre ---------- */
   function tick() { timerEl.textContent = fmt(performance.now() - startTime); }
   function startTimer() {
@@ -173,9 +205,10 @@
   /* ---------- Déroulé d'une partie ---------- */
   function start() {
     if (!tables.length) return;
-    score = 0; question = null; elapsed = 0; lastEntry = null;
+    score = 0; lives = MAX_LIVES; question = null; elapsed = 0; lastEntry = null;
     feedbackEl.textContent = '';
     updateScore(false);
+    renderLives();
     show('jeu');
     newQuestion();
     startTimer();
@@ -185,6 +218,9 @@
 
   function finish() {
     show('fin');
+    finTitle.textContent = 'Bravo, 3 étoiles ! 🥇';
+    lostSummary.hidden = true;
+    wonOnly.hidden = false;
     finalTimeEl.textContent = fmt(elapsed);
     finalTablesEl.textContent = '(' + tablesLabel(tables) + ')';
     savedEl.textContent = '';
@@ -193,6 +229,21 @@
     renderBoard(boardEl, tables.length, null);
     boardTitle.textContent = 'Les ' + TOP + ' meilleurs temps — ' + tables.length + (tables.length > 1 ? ' tables' : ' table');
     nameInput.focus();
+  }
+
+  // Plus aucune vie : écran « Partie perdue » avec le score et les étoiles obtenues, sans classement.
+  function lose() {
+    if (screens.jeu.hidden) return;   // partie arrêtée entre-temps
+    show('fin');
+    feedbackEl.textContent = '';
+    var won = STARS.filter(function (st) { return score >= st.at; }).map(function (st) { return st.name; });
+    finTitle.textContent = 'Partie perdue 💔';
+    lostSummary.textContent = 'Plus de vies ! Bonnes réponses : ' + score + ' / ' + GOAL + '. ' +
+      (won.length ? 'Étoile' + (won.length > 1 ? 's' : '') + ' obtenue' + (won.length > 1 ? 's' : '') + ' : ' + won.join(', ').replace(/, (\w+)$/, ' et $1') + '.'
+        : 'Aucune étoile cette fois.');
+    lostSummary.hidden = false;
+    wonOnly.hidden = true;
+    $('[data-again]').focus();
   }
 
   startBtn.addEventListener('click', start);
@@ -269,7 +320,7 @@
 
   // Accès pour les tests automatiques.
   window.__etoiles = {
-    etat: function () { return { score: score, running: running, elapsed: elapsed, tables: tables.slice(), question: question && { a: question.a, b: question.b, good: question.good, choices: question.choices.slice() } }; },
+    etat: function () { return { score: score, lives: lives, running: running, elapsed: elapsed, tables: tables.slice(), question: question && { a: question.a, b: question.b, good: question.good, choices: question.choices.slice() } }; },
     delaiErreur: function (ms) { WRONG_DELAY = ms; }
   };
 })();

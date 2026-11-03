@@ -63,3 +63,8 @@ Statuts : à faire / en cours / fait à valider / terminé / question en attente
 | 55 | À la fin, le joueur inscrit son nom pour enregistrer sa performance | fait à valider — nom (20 caractères max, pré-rempli avec le dernier nom utilisé) | ✅ 181/181 en local + CI + test en ligne (PR #24) |
 | 56 | Garder les 10 meilleurs temps par nombre de tables choisies (10 classements) — sur l'appareil (choix de l'utilisateur) | fait à valider — sur l'appareil, 10 classements (1 à 10 tables), top 10 chacun ; consultables aussi depuis l'écran de début | ✅ 181/181 en local + CI + test en ligne (PR #24) |
 | 57 | En fin de partie, afficher les 10 meilleurs temps du classement correspondant | fait à valider — classement du nombre de tables joué, ligne du joueur surlignée | ✅ 181/181 en local + CI + test en ligne (PR #24) |
+| 58 | Course aux étoiles : ajouter des vies, le joueur en a 3 | en cours (v2.10) — 3 cœurs à côté du compteur (choix validé) ; chaque mauvaise réponse = −1 vie (choix validé) | ✅ 205/205 en local (4 formats ; audit axe en CI) |
+| 59 | Au palier 10, le joueur récupère une vie | en cours (v2.10) — message « +1 vie ♥ » et animation du cœur | ✅ 205/205 en local |
+| 60 | Au palier 25, il en récupère une autre | en cours (v2.10) | ✅ 205/205 en local |
+| 61 | Maximum 3 vies : s'il en a déjà 3, il n'en obtient pas de 4e | en cours (v2.10) | ✅ 205/205 en local |
+| 62 | À 0 vie, le joueur perd la partie | en cours (v2.10) — écran « Partie perdue » : bonnes réponses et étoiles obtenues, sans classement (choix validé), chrono arrêté, bouton Rejouer | ✅ 205/205 en local |
