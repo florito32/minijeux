@@ -190,3 +190,107 @@ test('affichage : pas de défilement horizontal, question et réponses visibles 
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
+
+/* ---------- Vies (v2.10) ---------- */
+
+// Clique une mauvaise réponse et attend la perte de vie.
+async function mauvaiseReponse(page) {
+  const avant = await etat(page);
+  const faux = avant.question.choices.find((v) => v !== avant.question.good);
+  await page.getByRole('group', { name: 'Réponses possibles' }).getByRole('button', { name: String(faux), exact: true }).click();
+  await expect.poll(async () => (await etat(page)).lives).toBe(avant.lives - 1);
+  if (avant.lives - 1 > 0) {
+    await expect(page.locator('.et-choice.is-bad')).toHaveCount(0);   // question suivante affichée
+  }
+}
+
+async function demarrer(page, ...tables) {
+  await page.goto(PAGE);
+  await page.evaluate(() => window.__etoiles.delaiErreur(50));
+  await choisir(page, ...tables);
+  await page.getByRole('button', { name: 'Démarrer' }).click();
+}
+
+const coeursPleins = (page) => page.locator('[data-heart]:not(.is-lost)');
+
+test('vies : 3 cœurs au départ, une mauvaise réponse en retire un', async ({ page }) => {
+  await demarrer(page, 4);
+  expect((await etat(page)).lives).toBe(3);
+  await expect(coeursPleins(page)).toHaveCount(3);
+  await expect(page.locator('[data-lives-text]')).toHaveText('3 vies sur 3');
+  await mauvaiseReponse(page);
+  await expect(coeursPleins(page)).toHaveCount(2);
+  await expect(page.locator('[data-lives-text]')).toHaveText('2 vies sur 3');
+  await mauvaiseReponse(page);
+  await expect(page.locator('[data-lives-text]')).toHaveText('1 vie sur 3');
+  expect((await etat(page)).running).toBe(true);
+});
+
+test('vies : +1 au palier 10 et au palier 25, jamais plus de 3', async ({ page }) => {
+  test.setTimeout(120000);
+  await demarrer(page, 5);
+  // Sans erreur : à 10, on reste à 3 (maximum).
+  for (let i = 0; i < 10; i++) await bonneReponse(page);
+  expect((await etat(page)).lives).toBe(3);
+  // Deux erreurs : 1 vie. Au palier 25 : 2 vies (une seule vie par palier).
+  await mauvaiseReponse(page); await mauvaiseReponse(page);
+  expect((await etat(page)).lives).toBe(1);
+  for (let i = 10; i < 25; i++) await bonneReponse(page);
+  expect((await etat(page)).lives).toBe(2);
+  await expect(coeursPleins(page)).toHaveCount(2);
+});
+
+test('vies : 2 erreurs avant le palier 10 → 1 vie, puis 2 à 10 et 3 à 25', async ({ page }) => {
+  test.setTimeout(120000);
+  await demarrer(page, 3);
+  await mauvaiseReponse(page); await mauvaiseReponse(page);
+  for (let i = 0; i < 9; i++) await bonneReponse(page);
+  expect((await etat(page)).lives).toBe(1);
+  await bonneReponse(page);
+  expect((await etat(page)).lives).toBe(2);
+  for (let i = 10; i < 25; i++) await bonneReponse(page);
+  expect((await etat(page)).lives).toBe(3);
+  await expect(coeursPleins(page)).toHaveCount(3);
+});
+
+test('0 vie : partie perdue, score et étoiles affichés, pas de classement, Rejouer', async ({ page }) => {
+  test.setTimeout(120000);
+  await demarrer(page, 7);
+  for (let i = 0; i < 10; i++) await bonneReponse(page);         // étoile de bronze
+  for (let i = 0; i < 3; i++) await mauvaiseReponse(page);
+  await expect(page.getByRole('heading', { name: 'Partie perdue 💔' })).toBeVisible();
+  await expect(page.locator('[data-lost-summary]')).toHaveText('Plus de vies ! Bonnes réponses : 10 / 50. Étoile obtenue : bronze.');
+  await expect(page.getByLabel('Ton nom pour le classement')).toBeHidden();
+  await expect(page.locator('[data-board]')).toBeHidden();
+  expect((await etat(page)).running).toBe(false);
+  // Rien n'est enregistré dans les classements
+  expect(await page.evaluate(() => localStorage.getItem('minijeux-etoiles-classements-v1'))).toBeNull();
+  // Rejouer : retour au choix des tables, puis nouvelle partie avec 3 vies
+  await page.getByRole('button', { name: 'Rejouer' }).click();
+  await page.getByRole('button', { name: 'Démarrer' }).click();
+  expect((await etat(page)).lives).toBe(3);
+  await expect(coeursPleins(page)).toHaveCount(3);
+});
+
+test('0 vie sans étoile : message « Aucune étoile », puis une partie gagnée affiche bien le classement', async ({ page }) => {
+  test.setTimeout(120000);
+  await demarrer(page, 1);
+  for (let i = 0; i < 3; i++) await mauvaiseReponse(page);
+  await expect(page.locator('[data-lost-summary]')).toHaveText('Plus de vies ! Bonnes réponses : 0 / 50. Aucune étoile cette fois.');
+  await page.getByRole('button', { name: 'Rejouer' }).click();
+  await page.getByRole('button', { name: 'Démarrer' }).click();
+  for (let i = 0; i < 50; i++) await bonneReponse(page);
+  await expect(page.getByRole('heading', { name: /Bravo, 3 étoiles/ })).toBeVisible();
+  await expect(page.locator('[data-lost-summary]')).toBeHidden();
+  await expect(page.getByLabel('Ton nom pour le classement')).toBeVisible();
+});
+
+test('vies visibles sur tous les écrans @smoke', async ({ page }) => {
+  await page.goto(PAGE);
+  await choisir(page, 2);
+  await page.getByRole('button', { name: 'Démarrer' }).click();
+  await expect(page.locator('.et-hearts')).toBeInViewport({ ratio: 1 });
+  await expect(page.locator('.et-choice').nth(2)).toBeInViewport({ ratio: 1 });
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});

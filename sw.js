@@ -1,7 +1,7 @@
 // Service worker Minijeux.
 // Stratégie « réseau d'abord » : en ligne, on sert toujours la dernière version publiée
 // (mise à jour automatique, sans bouton) ; hors ligne, on sert la copie en cache.
-const CACHE = 'minijeux-v2.9';
+const CACHE = 'minijeux-v2.10';
 const PRECACHE = ['./', 'index.html', 'css/site.css', 'multiplication/', 'multiplication/aventure/', 'multiplication/aventure/vignette.png', 'multiplication/etoiles/', 'multiplication/etoiles/vignette.png', 'css/etoiles.css', 'js/etoiles.js', 'js/multiplication.js', 'js/qr.js', 'icons/qr-site.svg', 'puissance-4/', 'css/puissance-4.css', 'js/puissance-4.js', 'js/puissance-4-engine.js', 'js/version.js', 'js/pwa.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon.svg'];
 
 self.addEventListener('install', (event) => {

@@ -49,7 +49,7 @@
     <header class="page-head">
       <a class="back-link" href="../">← Jeux de multiplication</a>
       <h1>Course aux étoiles</h1>
-      <p>Trouve 50 bonnes réponses le plus vite possible : bronze à 10, argent à 25, or à 50.</p>
+      <p>Trouve 50 bonnes réponses le plus vite possible : bronze à 10, argent à 25, or à 50.<br>Tu as 3 vies : chaque erreur en coûte une, et tu en regagnes une à 10 et à 25 (3 au maximum).</p>
     </header>
 
     <!-- 1. Choix des tables -->
@@ -91,7 +91,12 @@
     <!-- 2. Partie en cours -->
     <section class="et-card et-play" data-screen="jeu" aria-label="Partie en cours" hidden>
       <div class="et-status">
-        <p class="et-count">Bonnes réponses : <strong data-score>0</strong> / 50</p>
+        <p class="et-count"><span class="et-count-label">Bonnes réponses :</span><span class="et-count-short" aria-hidden="true">✓</span> <strong data-score>0</strong> / 50</p>
+        <!-- Vies : 3 cœurs (plein = vie restante, gris = vie perdue) -->
+        <p class="et-lives" data-lives>
+          <span class="et-hearts" aria-hidden="true"><span class="et-heart" data-heart>♥</span><span class="et-heart" data-heart>♥</span><span class="et-heart" data-heart>♥</span></span>
+          <span class="visually-hidden" data-lives-text>3 vies sur 3</span>
+        </p>
         <p class="et-timer" aria-label="Chronomètre"><span aria-hidden="true">⏱</span> <time data-timer>0:00.0</time></p>
       </div>
       <!-- Étoiles gagnées : bronze (10), argent (25), or (50) -->
@@ -114,7 +119,10 @@
 
     <!-- 3. Fin de partie : nom + classement -->
     <section class="et-card" data-screen="fin" aria-labelledby="et-fin-titre" hidden>
-      <h2 id="et-fin-titre">Bravo, 3 étoiles ! 🥇</h2>
+      <h2 id="et-fin-titre" data-fin-title>Bravo, 3 étoiles ! 🥇</h2>
+      <!-- Partie perdue (0 vie) : score et étoiles obtenues, sans classement -->
+      <p class="et-final" data-lost-summary hidden></p>
+      <div data-won-only>
       <p class="et-final">Ton temps : <strong data-final-time></strong> <span class="et-sub" data-final-tables></span></p>
       <form class="et-name" data-name-form>
         <label for="et-nom">Ton nom pour le classement</label>
@@ -126,6 +134,7 @@
       <p class="et-saved" data-saved role="status"></p>
       <h3 data-board-title>Les 10 meilleurs temps</h3>
       <div data-board></div>
+      </div>
       <button type="button" class="btn btn-primary" data-again>Rejouer</button>
     </section>
   </div>
